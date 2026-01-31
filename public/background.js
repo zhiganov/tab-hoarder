@@ -119,6 +119,11 @@ function getAllFromStore(db, storeName) {
   });
 }
 
+function getBrowserName() {
+  if (navigator.brave) return 'brave';
+  return 'chrome';
+}
+
 async function runBackup() {
   try {
     const db = await openDB();
@@ -131,6 +136,7 @@ async function runBackup() {
     const data = {
       version: 1,
       exportedAt: new Date().toISOString(),
+      browser: getBrowserName(),
       collections,
       tabs,
     };
@@ -140,7 +146,7 @@ async function runBackup() {
 
     chrome.downloads.download({
       url: dataUrl,
-      filename: 'TabHoarder/tab-hoarder-backup.json',
+      filename: `TabHoarder/tab-hoarder-backup-${getBrowserName()}.json`,
       conflictAction: 'overwrite',
       saveAs: false,
     });

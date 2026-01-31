@@ -1,16 +1,21 @@
 # Tab Hoarder
 
-Chrome extension for managing browser tabs locally. Like [Toby](https://www.gettoby.com/), but open-source and self-hosted.
+Chrome/Brave extension for managing browser tabs locally. Like [Toby](https://www.gettoby.com/), but open-source and self-hosted.
 
 ## Features
 
 - Save and organize tabs into named collections
 - Local-first storage (IndexedDB) — no account, no cloud
-- Replaces Chrome new tab page with your tab manager
+- Replaces new tab page with your tab manager
+- **Toolbar icon** or **Alt+S**: save current tab and close it
+- **Save all tabs**: creates a date-named collection, saves all window tabs, and closes them
 - Search across all saved tabs (press `/`)
 - Drag and drop tabs between collections, reorder collections
+- Move tabs between collections via dropdown menu
+- Inline rename collections from sidebar or main title
 - Import from Toby export (JSON)
-- Export/import your data as JSON
+- Export your data as JSON backup
+- Daily automatic backup to `Downloads/TabHoarder/` (browser-specific filenames)
 - Light and dark mode (follows system preference)
 
 ## Install
@@ -20,10 +25,12 @@ npm install
 npm run build
 ```
 
-1. Open `chrome://extensions`
+1. Open `chrome://extensions` (or `brave://extensions`)
 2. Enable **Developer mode**
 3. Click **Load unpacked** and select the `dist/` folder
 4. Open a new tab — Tab Hoarder is your new tab page
+
+Set the keyboard shortcut at `chrome://extensions/shortcuts` if `Alt+S` wasn't auto-assigned.
 
 ## Development
 

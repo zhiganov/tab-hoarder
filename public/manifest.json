@@ -10,6 +10,14 @@
   "background": {
     "service_worker": "background.js"
   },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "Save and close current tab"
+    }
+  },
   "action": {
     "default_icon": {
       "16": "icons/icon-16.png",

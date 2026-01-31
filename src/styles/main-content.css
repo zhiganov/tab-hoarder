@@ -1,0 +1,122 @@
+.topbar {
+  height: var(--topbar-height);
+  min-height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0 var(--space-xl);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+}
+
+.topbar-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-left: auto;
+}
+
+.topbar-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.topbar-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.topbar-btn.primary {
+  background: var(--accent);
+  color: var(--text-inverse);
+}
+
+.topbar-btn.primary:hover {
+  background: var(--accent-hover);
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-xl);
+}
+
+.collection-header {
+  margin-bottom: var(--space-lg);
+}
+
+.collection-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.collection-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+.tab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-md);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  text-align: center;
+  min-height: 300px;
+}
+
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state-text {
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+.manual-add-form {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  width: 100%;
+  max-width: 480px;
+}
+
+.manual-add-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+.manual-add-form button {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--accent);
+  color: var(--text-inverse);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.manual-add-form button:hover {
+  background: var(--accent-hover);
+}

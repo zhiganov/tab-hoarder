@@ -1,0 +1,74 @@
+:root {
+  /* Light mode — warm parchment palette */
+  --bg-primary: #faf6f0;
+  --bg-secondary: #f3ede4;
+  --bg-sidebar: #f0ebe2;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fdf9f4;
+  --bg-input: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.3);
+
+  --text-primary: #2c2418;
+  --text-secondary: #6b5d4f;
+  --text-muted: #9b8e7e;
+  --text-inverse: #faf6f0;
+
+  --accent: #c45d3e;
+  --accent-hover: #a84e33;
+  --accent-subtle: rgba(196, 93, 62, 0.1);
+
+  --border: #e4ddd3;
+  --border-active: #c45d3e;
+
+  --shadow-sm: 0 1px 3px rgba(44, 36, 24, 0.06);
+  --shadow-md: 0 4px 12px rgba(44, 36, 24, 0.08);
+  --shadow-lg: 0 8px 24px rgba(44, 36, 24, 0.12);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --font-display: 'Libre Baskerville', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --sidebar-width: 260px;
+  --topbar-height: 56px;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1814;
+    --bg-secondary: #242019;
+    --bg-sidebar: #1e1b16;
+    --bg-card: #2a2620;
+    --bg-card-hover: #322d26;
+    --bg-input: #2a2620;
+    --bg-overlay: rgba(0, 0, 0, 0.5);
+
+    --text-primary: #e8e0d4;
+    --text-secondary: #b0a494;
+    --text-muted: #7a6f62;
+    --text-inverse: #1a1814;
+
+    --accent: #e8854a;
+    --accent-hover: #d4753d;
+    --accent-subtle: rgba(232, 133, 74, 0.12);
+
+    --border: #3a352e;
+    --border-active: #e8854a;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+}

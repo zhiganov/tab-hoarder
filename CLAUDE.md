@@ -39,7 +39,13 @@ Each store module exports async CRUD functions that update both IndexedDB and th
 
 ### Toolbar icon behavior
 
-`chrome.action.onClicked` (in `background.js`) saves the current tab to the most recently created collection and closes it. This writes directly to IndexedDB from the service worker context — the new tab page picks up changes on next load via `loadCollections()`/`loadTabs()`.
+`chrome.action.onClicked` (in `background.js`) saves the current tab to the most recently created collection and closes it. Keyboard shortcut: `Alt+S` (configured via `commands._execute_action` in manifest).
+
+This writes directly to IndexedDB from the service worker context. After saving, the service worker sends a `DATA_CHANGED` message — the new tab page listens for this in `app.jsx` and reloads signals immediately.
+
+### Daily backup
+
+The service worker uses `chrome.alarms` to run a daily backup via `chrome.downloads`. Backups are saved to `Downloads/TabHoarder/tab-hoarder-backup-{browser}.json` (detects Brave via `navigator.brave`, defaults to `chrome`). First backup runs on install. Both browsers can back up to the same directory with distinct filenames.
 
 ### CSS
 
@@ -56,5 +62,6 @@ Design palette: cream/parchment + terracotta (light), warm grays + amber (dark).
 
 - `base: ''` in `vite.config.js` — Chrome extensions require relative asset paths
 - `background.js` is static (not built) — keep it dependency-free, raw IndexedDB only
-- Bundle size matters — new tab opens on every tab creation. Current: ~42kB JS, ~12kB CSS
+- Bundle size matters — new tab opens on every tab creation. Current: ~42kB JS, ~13kB CSS
+- Permissions (`tabs`, `alarms`, `downloads`) — adding new ones requires user to re-approve the extension
 - Input handlers: use `onBlur` as the single submit path; `onKeyDown` Enter should just `e.target.blur()` to avoid double-fire

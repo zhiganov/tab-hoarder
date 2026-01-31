@@ -19,7 +19,7 @@ export function CollectionItem({ collection, count, active, onSelect, collection
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleRename();
+    if (e.key === 'Enter') e.target.blur();
     if (e.key === 'Escape') {
       setEditName(collection.name);
       setEditing(false);

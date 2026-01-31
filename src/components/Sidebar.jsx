@@ -23,10 +23,10 @@ export function Sidebar() {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleAdd();
+    if (e.key === 'Enter') e.target.blur();
     if (e.key === 'Escape') {
-      setAdding(false);
       setNewName('');
+      setAdding(false);
     }
   };
 

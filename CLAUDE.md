@@ -1,4 +1,10 @@
-# Tab Hoarder
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Tab Hoarder
 
 A Chrome extension for managing browser tabs locally - like Toby, but self-hosted and free.
 

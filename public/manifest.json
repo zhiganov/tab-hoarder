@@ -3,7 +3,7 @@
   "name": "Tab Hoarder",
   "version": "0.1.0",
   "description": "Save and organize browser tabs into collections. Open-source Toby alternative.",
-  "permissions": ["tabs"],
+  "permissions": ["tabs", "alarms", "downloads"],
   "chrome_url_overrides": {
     "newtab": "src/newtab.html"
   },

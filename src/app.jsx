@@ -24,6 +24,16 @@ export function App() {
       await loadTabs();
       setReady(true);
     })();
+
+    // Refresh when background service worker saves a tab
+    const listener = (message) => {
+      if (message.type === 'DATA_CHANGED') {
+        loadCollections();
+        loadTabs();
+      }
+    };
+    chrome.runtime?.onMessage?.addListener(listener);
+    return () => chrome.runtime?.onMessage?.removeListener(listener);
   }, []);
 
   if (!ready) return null;

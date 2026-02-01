@@ -37,7 +37,9 @@ export function TabCard({ tab, tabDrag }) {
   };
 
   const isInArchive = archiveCollection.value && tab.collectionId === archiveCollection.value.id;
-  const otherCollections = collections.value.filter((c) => c.id !== tab.collectionId && !c.isArchive);
+  const otherCollections = collections.value
+    .filter((c) => c.id !== tab.collectionId && !c.isArchive)
+    .sort((a, b) => b.updatedAt - a.updatedAt);
 
   const handleArchive = async (e) => {
     e.stopPropagation();
@@ -63,7 +65,7 @@ export function TabCard({ tab, tabDrag }) {
           e.target.style.display = 'none';
         }}
       />
-      <div class="tab-info">
+      <div class="tab-info" title={tab.url}>
         <div class="tab-title">{tab.title}</div>
         <div class="tab-domain">{getDomain(tab.url)}</div>
       </div>

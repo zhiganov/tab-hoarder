@@ -34,8 +34,16 @@ All UI state uses `@preact/signals` — no React-style prop drilling:
 - `src/store/collections.js` — `collections` signal (array), `activeCollectionId` signal, `activeCollection` computed, `touchCollection(id)` updates `updatedAt`
 - `src/store/tabs.js` — `allTabs` signal (array), `activeTabs` computed (filtered by active collection)
 - `src/store/search.js` — `searchQuery` signal, `searchResults` computed (grouped by collection)
+- `src/store/sort.js` — `collectionSort` (manual/name/updated) and `tabSort` (manual/name/created) signals, persisted to localStorage
 
 Each store module exports async CRUD functions that update both IndexedDB and the signal in one call.
+
+### Utilities (`src/lib/`)
+
+- `id.js` — `generateId()` via `crypto.randomUUID()`
+- `favicon.js` — `getFaviconUrl(url)` (Google Favicon API), `getDomain(url)` (hostname without `www.`)
+- `export.js` — `exportData(collectionId?)` — downloads JSON, optionally filtered to one collection
+- `toby-import.js` — `parseTobyExport(data)` — normalizes both Toby and Tab Hoarder JSON formats
 
 ### Toolbar icon behavior
 
@@ -69,6 +77,8 @@ Returns two objects (`tabDrag`, `collectionDrag`) with `onDragStart/onDragOver/o
 ### Component patterns
 
 Components read signals directly (not via props). Store modules are imported and `.value` is accessed inline. No prop drilling, no context providers.
+
+App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid). Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent. Dropdown menus (move menu in `TabCard`, export menu in `TopBar`) use a ref + `mousedown` listener for outside-click dismissal.
 
 ### Import/export
 

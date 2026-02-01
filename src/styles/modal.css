@@ -108,3 +108,34 @@
 .import-status.success {
   color: #3d8c40;
 }
+
+.bookmark-folder-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) 0;
+}
+
+.bookmark-folder-item {
+  padding: var(--space-xs) var(--space-sm);
+}
+
+.bookmark-folder-item label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.bookmark-folder-item input[type="checkbox"] {
+  flex-shrink: 0;
+}
+
+.bookmark-folder-count {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 12px;
+}

@@ -4,10 +4,12 @@ import { activeCollection, createCollection } from '../store/collections';
 import { addTabs } from '../store/tabs';
 import { getFaviconUrl } from '../lib/favicon';
 import { ImportModal } from './ImportModal';
+import { BookmarkImportModal } from './BookmarkImportModal';
 import { exportData } from '../lib/export';
 
 export function TopBar() {
   const [showImport, setShowImport] = useState(false);
+  const [showBookmarks, setShowBookmarks] = useState(false);
 
   const handleSaveAllTabs = async () => {
     try {
@@ -50,6 +52,12 @@ export function TopBar() {
             </svg>
             Save all tabs
           </button>
+          <button class="topbar-btn" onClick={() => setShowBookmarks(true)} title="Import bookmark folders as collections">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            Bookmarks
+          </button>
           <button class="topbar-btn" onClick={() => setShowImport(true)} title="Import tabs from Toby or JSON">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -69,6 +77,7 @@ export function TopBar() {
         </div>
       </div>
       {showImport && <ImportModal onClose={() => setShowImport(false)} />}
+      {showBookmarks && <BookmarkImportModal onClose={() => setShowBookmarks(false)} />}
     </>
   );
 }

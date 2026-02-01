@@ -31,7 +31,7 @@ The new tab page communicates with the service worker via `chrome.runtime.sendMe
 ### State management
 
 All UI state uses `@preact/signals` — no React-style prop drilling:
-- `src/store/collections.js` — `collections` signal (array), `activeCollectionId` signal, `activeCollection` computed
+- `src/store/collections.js` — `collections` signal (array), `activeCollectionId` signal, `activeCollection` computed, `touchCollection(id)` updates `updatedAt`
 - `src/store/tabs.js` — `allTabs` signal (array), `activeTabs` computed (filtered by active collection)
 - `src/store/search.js` — `searchQuery` signal, `searchResults` computed (grouped by collection)
 
@@ -70,12 +70,14 @@ Returns two objects (`tabDrag`, `collectionDrag`) with `onDragStart/onDragOver/o
 
 Components read signals directly (not via props). Store modules are imported and `.value` is accessed inline. No prop drilling, no context providers.
 
-### Import/export formats
+### Import/export
 
 - **Toby import**: `{ lists: [{ title, cards: [{ title, url }] }] }`
 - **Tab Hoarder format**: `{ version, exportedAt, collections: [...], tabs: [...] }`
+- **Chrome bookmarks import**: `BookmarkImportModal` reads `chrome.bookmarks.getTree()`, flattens folders with URLs, user picks folders via checkboxes, each becomes a collection. Duplicate URLs (already in any collection) are skipped.
+- **Export**: supports exporting all collections or a single active collection via `exportData(collectionId?)`.
 
-Both import and export use `src/lib/toby-import.js` and `src/lib/export.js`.
+Import/export logic lives in `src/lib/toby-import.js`, `src/lib/export.js`, and `src/components/BookmarkImportModal.jsx`.
 
 ## Packaging
 
@@ -90,6 +92,6 @@ GitHub Actions workflow (`package-dmg.yml`) runs on `macos-latest` — triggers 
 
 - `base: ''` in `vite.config.js` — Chrome extensions require relative asset paths
 - `background.js` is static (not built) — keep it dependency-free, raw IndexedDB only
-- Bundle size matters — new tab opens on every tab creation. Current: ~42kB JS, ~13kB CSS
-- Permissions (`tabs`, `alarms`, `downloads`) — adding new ones requires user to re-approve the extension
+- Bundle size matters — new tab opens on every tab creation. Current: ~50kB JS, ~15kB CSS
+- Permissions (`tabs`, `alarms`, `downloads`, `bookmarks`) — adding new ones requires user to re-approve the extension
 - Input handlers: use `onBlur` as the single submit path; `onKeyDown` Enter should just `e.target.blur()` to avoid double-fire

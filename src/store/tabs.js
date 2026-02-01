@@ -1,7 +1,7 @@
 import { signal, computed } from '@preact/signals';
 import { getDB } from './db';
 import { generateId } from '../lib/id';
-import { activeCollectionId } from './collections';
+import { activeCollectionId, archiveCollection } from './collections';
 
 export const allTabs = signal([]);
 
@@ -75,6 +75,14 @@ export async function moveTab(tabId, targetCollectionId, newOrder) {
   };
   await db.put('tabs', updated);
   allTabs.value = allTabs.value.map((t) => (t.id === tabId ? updated : t));
+}
+
+export async function archiveTab(tabId) {
+  const archive = archiveCollection.value;
+  if (!archive) return;
+  const existing = allTabs.value.filter((t) => t.collectionId === archive.id);
+  const maxOrder = existing.reduce((max, t) => Math.max(max, t.order), -1);
+  await moveTab(tabId, archive.id, maxOrder + 1);
 }
 
 export async function reorderTabs(collectionId, orderedIds) {

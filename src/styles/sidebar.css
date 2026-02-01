@@ -123,6 +123,19 @@
   color: var(--text-primary);
 }
 
+.archive-item {
+  margin-bottom: var(--space-xs);
+}
+
+.archive-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.archive-item.active .archive-icon {
+  color: var(--accent);
+}
+
 .add-collection-btn {
   display: flex;
   align-items: center;

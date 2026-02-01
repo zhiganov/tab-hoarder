@@ -104,10 +104,11 @@ export function useDragAndDrop() {
         moveTab(dragData.value.id, targetCollectionId, maxOrder + 1);
         activeCollectionId.value = targetCollectionId;
       } else if (dragType.value === 'collection' && dragId.value !== targetCollectionId) {
-        // Reorder collections
-        const ids = collections.value.map((c) => c.id);
+        // Reorder collections (exclude archive)
+        const ids = collections.value.filter((c) => !c.isArchive).map((c) => c.id);
         const fromIdx = ids.indexOf(dragId.value);
         const toIdx = ids.indexOf(targetCollectionId);
+        if (fromIdx === -1 || toIdx === -1) return;
         ids.splice(fromIdx, 1);
         ids.splice(toIdx, 0, dragId.value);
         reorderCollections(ids);

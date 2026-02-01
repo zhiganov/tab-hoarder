@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { initDB } from './store/db';
-import { loadCollections, activeCollection, collections } from './store/collections';
+import { loadCollections, activeCollection, collections, getOrCreateArchive } from './store/collections';
 import { loadTabs } from './store/tabs';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
@@ -21,6 +21,7 @@ export function App() {
     (async () => {
       await initDB();
       await loadCollections();
+      await getOrCreateArchive();
       await loadTabs();
       setReady(true);
     })();

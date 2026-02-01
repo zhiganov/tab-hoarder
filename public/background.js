@@ -25,7 +25,12 @@ function getLatestCollection(db) {
     const store = tx.objectStore('collections');
     const index = store.index('by-order');
     const req = index.openCursor(null, 'prev'); // highest order first
-    req.onsuccess = () => resolve(req.result ? req.result.value : null);
+    req.onsuccess = () => {
+      const cursor = req.result;
+      if (!cursor) return resolve(null);
+      if (cursor.value.isArchive) return cursor.continue();
+      resolve(cursor.value);
+    };
     req.onerror = () => reject(req.error);
   });
 }

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'preact/hooks';
-import { removeTab, moveTab, allTabs } from '../store/tabs';
-import { collections } from '../store/collections';
+import { removeTab, moveTab, allTabs, archiveTab } from '../store/tabs';
+import { collections, archiveCollection } from '../store/collections';
 import { getFaviconUrl, getDomain } from '../lib/favicon';
 
 export function TabCard({ tab, tabDrag }) {
@@ -35,7 +35,13 @@ export function TabCard({ tab, tabDrag }) {
     setShowMenu(false);
   };
 
-  const otherCollections = collections.value.filter((c) => c.id !== tab.collectionId);
+  const isInArchive = archiveCollection.value && tab.collectionId === archiveCollection.value.id;
+  const otherCollections = collections.value.filter((c) => c.id !== tab.collectionId && !c.isArchive);
+
+  const handleArchive = async (e) => {
+    e.stopPropagation();
+    await archiveTab(tab.id);
+  };
 
   return (
     <div
@@ -72,6 +78,15 @@ export function TabCard({ tab, tabDrag }) {
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+        {!isInArchive && (
+          <button class="tab-action-btn" onClick={handleArchive} title="Archive tab">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="5" rx="1" />
+              <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8" />
+              <path d="M10 12h4" />
             </svg>
           </button>
         )}

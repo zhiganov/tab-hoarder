@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'preact/hooks';
 import { removeTab, moveTab, allTabs, archiveTab } from '../store/tabs';
-import { collections, archiveCollection } from '../store/collections';
+import { collections, archiveCollection, touchCollection } from '../store/collections';
 import { tabSort } from '../store/sort';
 import { getFaviconUrl, getDomain } from '../lib/favicon';
 
@@ -33,6 +33,7 @@ export function TabCard({ tab, tabDrag }) {
     const targetTabs = allTabs.value.filter((t) => t.collectionId === targetCollectionId);
     const maxOrder = targetTabs.reduce((max, t) => Math.max(max, t.order), -1);
     await moveTab(tab.id, targetCollectionId, maxOrder + 1);
+    await touchCollection(targetCollectionId);
     setShowMenu(false);
   };
 

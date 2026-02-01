@@ -67,6 +67,15 @@ export async function createCollection(name) {
   return collection;
 }
 
+export async function touchCollection(id) {
+  const db = getDB();
+  const collection = collections.value.find((c) => c.id === id);
+  if (!collection) return;
+  const updated = { ...collection, updatedAt: Date.now() };
+  await db.put('collections', updated);
+  collections.value = collections.value.map((c) => (c.id === id ? updated : c));
+}
+
 export async function renameCollection(id, name) {
   const db = getDB();
   const collection = collections.value.find((c) => c.id === id);

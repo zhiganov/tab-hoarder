@@ -11,10 +11,13 @@ Chrome/Brave extension for managing browser tabs locally. Like [Toby](https://ww
 - **Save all tabs**: creates a date-named collection, saves all window tabs, and closes them
 - Search across all saved tabs (press `/`)
 - Drag and drop tabs between collections, reorder collections
-- Move tabs between collections via dropdown menu
+- Move tabs between collections via dropdown menu (sorted by recently updated)
+- Archive tabs instead of deleting them
+- Sort collections and tabs (manual, name, updated/created)
 - Inline rename collections from sidebar or main title
 - Import from Toby export (JSON)
-- Export your data as JSON backup
+- Import Chrome bookmark folders as collections (with duplicate URL detection)
+- Export all collections or just the current one as JSON
 - Daily automatic backup to `Downloads/TabHoarder/` (browser-specific filenames)
 - Light and dark mode (follows system preference)
 

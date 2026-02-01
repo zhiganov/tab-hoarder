@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'preact/hooks';
 import { removeTab, moveTab, allTabs, archiveTab } from '../store/tabs';
 import { collections, archiveCollection } from '../store/collections';
+import { tabSort } from '../store/sort';
 import { getFaviconUrl, getDomain } from '../lib/favicon';
 
 export function TabCard({ tab, tabDrag }) {
@@ -47,7 +48,7 @@ export function TabCard({ tab, tabDrag }) {
     <div
       class="tab-card"
       onClick={handleClick}
-      draggable
+      draggable={tabSort.value === 'manual'}
       onDragStart={(e) => tabDrag.onDragStart(e, tab)}
       onDragOver={(e) => tabDrag.onDragOver(e, tab.id)}
       onDragLeave={(e) => tabDrag.onDragLeave(e)}

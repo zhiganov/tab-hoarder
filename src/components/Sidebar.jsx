@@ -6,7 +6,9 @@ import {
   createCollection,
 } from '../store/collections';
 import { allTabs } from '../store/tabs';
+import { collectionSort, setCollectionSort } from '../store/sort';
 import { CollectionItem } from './CollectionItem';
+import { SortMenu } from './SortMenu';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
 export function Sidebar() {
@@ -35,6 +37,15 @@ export function Sidebar() {
     <div class="sidebar">
       <div class="sidebar-header">
         <span class="sidebar-title">Tab Hoarder</span>
+        <SortMenu
+          value={collectionSort.value}
+          onChange={setCollectionSort}
+          options={[
+            { value: 'manual', label: 'Manual' },
+            { value: 'name', label: 'Name' },
+            { value: 'updated', label: 'Date updated' },
+          ]}
+        />
       </div>
       <div class="sidebar-list">
         {regularCollections.value.map((col) => {

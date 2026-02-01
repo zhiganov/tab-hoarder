@@ -1,6 +1,7 @@
 import { signal } from '@preact/signals';
 import { reorderTabs, moveTab, allTabs } from '../store/tabs';
 import { reorderCollections, collections, activeCollectionId } from '../store/collections';
+import { collectionSort, tabSort } from '../store/sort';
 
 const dragType = signal(null); // 'tab' | 'collection'
 const dragId = signal(null);
@@ -9,6 +10,7 @@ const dragData = signal(null);
 export function useDragAndDrop() {
   const tabDrag = {
     onDragStart(e, tab) {
+      if (tabSort.value !== 'manual') { e.preventDefault(); return; }
       dragType.value = 'tab';
       dragId.value = tab.id;
       dragData.value = tab;
@@ -64,6 +66,7 @@ export function useDragAndDrop() {
 
   const collectionDrag = {
     onDragStart(e, collectionId) {
+      if (collectionSort.value !== 'manual') { e.preventDefault(); return; }
       dragType.value = 'collection';
       dragId.value = collectionId;
       e.dataTransfer.effectAllowed = 'move';

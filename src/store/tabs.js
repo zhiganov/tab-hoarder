@@ -2,14 +2,17 @@ import { signal, computed } from '@preact/signals';
 import { getDB } from './db';
 import { generateId } from '../lib/id';
 import { activeCollectionId, archiveCollection } from './collections';
+import { tabSort } from './sort';
 
 export const allTabs = signal([]);
 
-export const activeTabs = computed(() =>
-  allTabs.value
-    .filter((t) => t.collectionId === activeCollectionId.value)
-    .sort((a, b) => a.order - b.order)
-);
+export const activeTabs = computed(() => {
+  const filtered = allTabs.value.filter((t) => t.collectionId === activeCollectionId.value);
+  const mode = tabSort.value;
+  if (mode === 'name') return [...filtered].sort((a, b) => a.title.localeCompare(b.title));
+  if (mode === 'created') return [...filtered].sort((a, b) => b.createdAt - a.createdAt);
+  return filtered.sort((a, b) => a.order - b.order); // manual
+});
 
 export async function loadTabs() {
   const db = getDB();

@@ -159,3 +159,72 @@
 .manual-add-form button:hover {
   background: var(--accent-hover);
 }
+
+/* Sort controls */
+
+.sort-wrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.sort-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.sort-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.sort-btn.sort-active {
+  color: var(--accent);
+}
+
+.sort-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  min-width: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-xs) 0;
+  z-index: 50;
+  animation: fadeIn var(--transition-fast);
+}
+
+.sort-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+
+.sort-menu-item:hover {
+  background: var(--bg-secondary);
+}
+
+.sort-menu-item.active {
+  color: var(--accent);
+}
+
+.sort-menu-check {
+  width: 14px;
+  font-size: 12px;
+  text-align: center;
+  flex-shrink: 0;
+}

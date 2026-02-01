@@ -1,8 +1,10 @@
 import { useState } from 'preact/hooks';
 import { activeCollection, renameCollection } from '../store/collections';
 import { activeTabs } from '../store/tabs';
+import { tabSort, setTabSort } from '../store/sort';
 import { TabCard } from './TabCard';
 import { EmptyState } from './EmptyState';
+import { SortMenu } from './SortMenu';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
 export function MainContent() {
@@ -64,6 +66,15 @@ export function MainContent() {
                   </svg>
                 </button>
               )}
+              <SortMenu
+                value={tabSort.value}
+                onChange={setTabSort}
+                options={[
+                  { value: 'manual', label: 'Manual' },
+                  { value: 'name', label: 'Name' },
+                  { value: 'created', label: 'Date added' },
+                ]}
+              />
             </>
           )}
         </div>

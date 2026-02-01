@@ -1,5 +1,6 @@
 import { useState, useRef } from 'preact/hooks';
 import { renameCollection, deleteCollection } from '../store/collections';
+import { collectionSort } from '../store/sort';
 import { ConfirmDialog } from './ConfirmDialog';
 
 export function CollectionItem({ collection, count, active, onSelect, collectionDrag }) {
@@ -37,7 +38,7 @@ export function CollectionItem({ collection, count, active, onSelect, collection
         ref={itemRef}
         class={`collection-item ${active ? 'active' : ''}`}
         onClick={onSelect}
-        draggable
+        draggable={collectionSort.value === 'manual'}
         onDragStart={(e) => collectionDrag.onDragStart(e, collection.id)}
         onDragOver={(e) => collectionDrag.onDragOver(e, collection.id)}
         onDragLeave={(e) => collectionDrag.onDragLeave(e)}

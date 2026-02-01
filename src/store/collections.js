@@ -1,6 +1,7 @@
 import { signal, computed } from '@preact/signals';
 import { getDB } from './db';
 import { generateId } from '../lib/id';
+import { collectionSort } from './sort';
 
 export const collections = signal([]);
 export const activeCollectionId = signal(null);
@@ -13,9 +14,13 @@ export const archiveCollection = computed(() =>
   collections.value.find((c) => c.isArchive) || null
 );
 
-export const regularCollections = computed(() =>
-  collections.value.filter((c) => !c.isArchive)
-);
+export const regularCollections = computed(() => {
+  const filtered = collections.value.filter((c) => !c.isArchive);
+  const mode = collectionSort.value;
+  if (mode === 'name') return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+  if (mode === 'updated') return [...filtered].sort((a, b) => b.updatedAt - a.updatedAt);
+  return filtered; // manual: already sorted by order from DB
+});
 
 export async function loadCollections() {
   const db = getDB();

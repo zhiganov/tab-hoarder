@@ -1,9 +1,14 @@
 import { getDB } from '../store/db';
 
-export async function exportData() {
+export async function exportData(collectionId) {
   const db = getDB();
-  const collections = await db.getAll('collections');
-  const tabs = await db.getAll('tabs');
+  let collections = await db.getAll('collections');
+  let tabs = await db.getAll('tabs');
+
+  if (collectionId) {
+    collections = collections.filter((c) => c.id === collectionId);
+    tabs = tabs.filter((t) => t.collectionId === collectionId);
+  }
 
   const data = {
     version: 1,

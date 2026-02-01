@@ -58,6 +58,34 @@ Design palette: cream/parchment + terracotta (light), warm grays + amber (dark).
 - **collections**: `id` (UUID), `name`, `order`, `color`, `createdAt`, `updatedAt` — indexed by `order`
 - **tabs**: `id` (UUID), `collectionId`, `title`, `url`, `favicon`, `order`, `createdAt` — indexed by `collectionId` and compound `[collectionId, order]`
 
+### Drag and drop
+
+Single hook `src/hooks/useDragAndDrop.js` manages two drag types via signals (`dragType`, `dragId`, `dragData`):
+- **Tab drag** — reorder within collection or move cross-collection
+- **Collection drag** — reorder in sidebar or drop tabs onto collections
+
+Returns two objects (`tabDrag`, `collectionDrag`) with `onDragStart/onDragOver/onDragLeave/onDrop/onDragEnd` handlers.
+
+### Component patterns
+
+Components read signals directly (not via props). Store modules are imported and `.value` is accessed inline. No prop drilling, no context providers.
+
+### Import/export formats
+
+- **Toby import**: `{ lists: [{ title, cards: [{ title, url }] }] }`
+- **Tab Hoarder format**: `{ version, exportedAt, collections: [...], tabs: [...] }`
+
+Both import and export use `src/lib/toby-import.js` and `src/lib/export.js`.
+
+## Packaging
+
+```bash
+./scripts/package-dmg.sh            # Build + create .dmg (macOS only, uses hdiutil)
+./scripts/package-dmg.sh --skip-build  # Skip npm ci/build, use existing dist/
+```
+
+GitHub Actions workflow (`package-dmg.yml`) runs on `macos-latest` — triggers on manual dispatch or `v*` tag push. Uploads DMG as artifact; on tag push, attaches to GitHub Release.
+
 ## Key Constraints
 
 - `base: ''` in `vite.config.js` — Chrome extensions require relative asset paths

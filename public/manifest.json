@@ -11,11 +11,11 @@
     "service_worker": "background.js"
   },
   "commands": {
-    "_execute_action": {
+    "save-to-recent": {
       "suggested_key": {
         "default": "Alt+S"
       },
-      "description": "Save and close current tab"
+      "description": "Save tab to most recent collection"
     }
   },
   "action": {

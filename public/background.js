@@ -19,17 +19,27 @@ function openDB() {
   });
 }
 
-function getLatestCollection(db) {
+function getSavedTabsCollection(db) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('collections', 'readonly');
-    const store = tx.objectStore('collections');
-    const index = store.index('by-order');
-    const req = index.openCursor(null, 'prev'); // highest order first
+    const req = tx.objectStore('collections').getAll();
     req.onsuccess = () => {
-      const cursor = req.result;
-      if (!cursor) return resolve(null);
-      if (cursor.value.isArchive) return cursor.continue();
-      resolve(cursor.value);
+      const found = req.result.find(c => c.name === 'Saved Tabs' && !c.isArchive);
+      resolve(found || null);
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function getRecentCollection(db) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('collections', 'readonly');
+    const req = tx.objectStore('collections').getAll();
+    req.onsuccess = () => {
+      const regular = req.result.filter(c => !c.isArchive);
+      if (regular.length === 0) return resolve(null);
+      regular.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+      resolve(regular[0]);
     };
     req.onerror = () => reject(req.error);
   });
@@ -81,42 +91,63 @@ function saveTab(db, collectionId, title, url, favicon, order) {
   });
 }
 
-// Toolbar icon click: save current tab to latest collection, then close it
+// Save tab to a collection, close it, sync backup, and notify
+async function saveAndCloseTab(tab, collection) {
+  const db = await openDB();
+  if (!collection) {
+    collection = await createDefaultCollection(db);
+  }
+
+  const maxOrder = await getMaxTabOrder(db, collection.id);
+  const hostname = new URL(tab.url).hostname.replace(/^www\./, '');
+  const favicon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+
+  await saveTab(db, collection.id, tab.title, tab.url, favicon, maxOrder + 1);
+
+  // Mirror to chrome.storage.local
+  const allCollections = await getAllFromStore(db, 'collections');
+  const allTabs = await getAllFromStore(db, 'tabs');
+  db.close();
+  chrome.storage.local.set({
+    'tab-hoarder-backup': { collections: allCollections, tabs: allTabs },
+  });
+
+  // Brief badge confirmation
+  chrome.action.setBadgeBackgroundColor({ color: '#3d8c40' });
+  chrome.action.setBadgeText({ text: '✓' });
+  setTimeout(() => chrome.action.setBadgeText({ text: '' }), 1500);
+
+  chrome.tabs.remove(tab.id);
+
+  // Notify open new tab pages to refresh
+  chrome.runtime.sendMessage({ type: 'DATA_CHANGED' }).catch(() => {});
+}
+
+// Toolbar icon click: save to "Saved Tabs" collection
 chrome.action.onClicked.addListener(async (tab) => {
   if (tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) return;
-
   try {
     const db = await openDB();
-    let collection = await getLatestCollection(db);
-    if (!collection) {
-      collection = await createDefaultCollection(db);
-    }
-
-    const maxOrder = await getMaxTabOrder(db, collection.id);
-    const hostname = new URL(tab.url).hostname.replace(/^www\./, '');
-    const favicon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-
-    await saveTab(db, collection.id, tab.title, tab.url, favicon, maxOrder + 1);
-
-    // Mirror to chrome.storage.local
-    const allCollections = await getAllFromStore(db, 'collections');
-    const allTabs = await getAllFromStore(db, 'tabs');
+    const collection = await getSavedTabsCollection(db);
     db.close();
-    chrome.storage.local.set({
-      'tab-hoarder-backup': { collections: allCollections, tabs: allTabs },
-    });
-
-    // Brief badge confirmation
-    chrome.action.setBadgeBackgroundColor({ color: '#3d8c40' });
-    chrome.action.setBadgeText({ text: '✓' });
-    setTimeout(() => chrome.action.setBadgeText({ text: '' }), 1500);
-
-    chrome.tabs.remove(tab.id);
-
-    // Notify open new tab pages to refresh
-    chrome.runtime.sendMessage({ type: 'DATA_CHANGED' }).catch(() => {});
+    await saveAndCloseTab(tab, collection);
   } catch (err) {
     console.error('Tab Hoarder: failed to save tab', err);
+  }
+});
+
+// Alt+S shortcut: save to most recently updated collection
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command !== 'save-to-recent') return;
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!tab || tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) return;
+    const db = await openDB();
+    const collection = await getRecentCollection(db);
+    db.close();
+    await saveAndCloseTab(tab, collection);
+  } catch (err) {
+    console.error('Tab Hoarder: failed to save tab via shortcut', err);
   }
 });
 

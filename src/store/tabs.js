@@ -1,7 +1,7 @@
 import { signal, computed } from '@preact/signals';
 import { getDB } from './db';
 import { generateId } from '../lib/id';
-import { activeCollectionId, archiveCollection } from './collections';
+import { activeCollectionId, archiveCollection, touchCollection } from './collections';
 import { tabSort } from './sort';
 
 export const allTabs = signal([]);
@@ -61,9 +61,11 @@ export async function addTabs(collectionId, tabsData) {
 }
 
 export async function removeTab(id) {
+  const tab = allTabs.value.find((t) => t.id === id);
   const db = getDB();
   await db.delete('tabs', id);
   allTabs.value = allTabs.value.filter((t) => t.id !== id);
+  if (tab) await touchCollection(tab.collectionId);
 }
 
 export async function moveTab(tabId, targetCollectionId, newOrder) {

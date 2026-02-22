@@ -73,6 +73,7 @@ export async function moveTab(tabId, targetCollectionId, newOrder) {
   const tab = allTabs.value.find((t) => t.id === tabId);
   if (!tab) return;
 
+  const sourceCollectionId = tab.collectionId;
   const updated = {
     ...tab,
     collectionId: targetCollectionId,
@@ -80,6 +81,10 @@ export async function moveTab(tabId, targetCollectionId, newOrder) {
   };
   await db.put('tabs', updated);
   allTabs.value = allTabs.value.map((t) => (t.id === tabId ? updated : t));
+  await touchCollection(targetCollectionId);
+  if (sourceCollectionId !== targetCollectionId) {
+    await touchCollection(sourceCollectionId);
+  }
 }
 
 export async function archiveTab(tabId) {

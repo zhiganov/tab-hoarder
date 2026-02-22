@@ -48,11 +48,16 @@ Each store module exports async CRUD functions that update both IndexedDB and th
 - `export.js` — `exportData(collectionId?)` — downloads JSON, optionally filtered to one collection
 - `toby-import.js` — `parseTobyExport(data)` — normalizes both Toby and Tab Hoarder JSON formats, preserves `isArchive` and `color` metadata
 
-### Toolbar icon behavior
+### Save-and-close behavior
 
-`chrome.action.onClicked` (in `background.js`) saves the current tab to the most recently created collection and closes it. Keyboard shortcut: `Alt+S` (configured via `commands._execute_action` in manifest).
+Two separate save targets via `background.js`:
 
-This writes directly to IndexedDB from the service worker context. After saving, the service worker sends a `DATA_CHANGED` message — the new tab page listens for this in `app.jsx` and reloads signals immediately.
+- **Toolbar icon click** (`chrome.action.onClicked`) — saves to the "Saved Tabs" collection (creates it if missing)
+- **Alt+S shortcut** (`chrome.commands.onCommand: save-to-recent`) — saves to the most recently updated collection (by `updatedAt`)
+
+Both use the shared `saveAndCloseTab()` helper which writes to IndexedDB, mirrors to chrome.storage.local, shows a badge confirmation, closes the tab, and sends a `DATA_CHANGED` message to refresh open new tab pages.
+
+Note: Alt+S is a named command (not `_execute_action`), so users may need to set it at `chrome://extensions/shortcuts` after install.
 
 ### Data persistence
 
@@ -71,8 +76,10 @@ Design palette: cream/parchment + terracotta (light), warm grays + amber (dark).
 
 ## Data Model (IndexedDB)
 
-- **collections**: `id` (UUID), `name`, `order`, `color`, `createdAt`, `updatedAt` — indexed by `order`
+- **collections**: `id` (UUID), `name`, `order`, `color`, `isArchive`, `createdAt`, `updatedAt` — indexed by `order`
 - **tabs**: `id` (UUID), `collectionId`, `title`, `url`, `favicon`, `order`, `createdAt` — indexed by `collectionId` and compound `[collectionId, order]`
+
+`touchCollection(id)` must be called on any operation that modifies a collection's contents (add, remove, move, archive tabs). This keeps `updatedAt` accurate for the "sort by recently updated" feature and the Alt+S save target.
 
 ### Drag and drop
 

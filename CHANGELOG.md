@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- Fix opening local `file://` URLs from tab cards
+
 ## 0.2.2
 
 - Split save behavior: toolbar icon saves to "Saved Tabs", Alt+S saves to most recently updated collection

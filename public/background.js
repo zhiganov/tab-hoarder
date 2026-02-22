@@ -104,6 +104,15 @@ async function saveAndCloseTab(tab, collection) {
 
   await saveTab(db, collection.id, tab.title, tab.url, favicon, maxOrder + 1);
 
+  // Update collection's updatedAt (equivalent of touchCollection in app context)
+  const updated = { ...collection, updatedAt: Date.now() };
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction('collections', 'readwrite');
+    tx.objectStore('collections').put(updated);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+
   // Mirror to chrome.storage.local
   const allCollections = await getAllFromStore(db, 'collections');
   const allTabs = await getAllFromStore(db, 'tabs');

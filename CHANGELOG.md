@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.4
+
+- Fix collection `updatedAt` not updating on toolbar icon and Alt+S saves
+
 ## 0.2.3
 
 - Fix opening local `file://` URLs from tab cards

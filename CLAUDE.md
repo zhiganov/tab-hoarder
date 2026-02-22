@@ -36,6 +36,9 @@ All UI state uses `@preact/signals` — no React-style prop drilling:
 - `src/store/search.js` — `searchQuery` signal, `searchResults` computed (grouped by collection)
 - `src/store/sort.js` — `collectionSort` (manual/name/updated) and `tabSort` (manual/name/created) signals, persisted to localStorage
 
+- `src/store/backup.js` — `syncToStorage()` mirrors signals to chrome.storage.local, `restoreFromStorage()` restores IndexedDB from backup
+- `src/store/jam.js` — `jamRooms` signal (array), `startJamPolling()`/`stopJamPolling()` — polls navidrome-jam API every 2 minutes
+
 Each store module exports async CRUD functions that update both IndexedDB and the signal in one call.
 
 ### Utilities (`src/lib/`)
@@ -43,7 +46,7 @@ Each store module exports async CRUD functions that update both IndexedDB and th
 - `id.js` — `generateId()` via `crypto.randomUUID()`
 - `favicon.js` — `getFaviconUrl(url)` (Google Favicon API), `getDomain(url)` (hostname without `www.`)
 - `export.js` — `exportData(collectionId?)` — downloads JSON, optionally filtered to one collection
-- `toby-import.js` — `parseTobyExport(data)` — normalizes both Toby and Tab Hoarder JSON formats
+- `toby-import.js` — `parseTobyExport(data)` — normalizes both Toby and Tab Hoarder JSON formats, preserves `isArchive` and `color` metadata
 
 ### Toolbar icon behavior
 
@@ -51,9 +54,14 @@ Each store module exports async CRUD functions that update both IndexedDB and th
 
 This writes directly to IndexedDB from the service worker context. After saving, the service worker sends a `DATA_CHANGED` message — the new tab page listens for this in `app.jsx` and reloads signals immediately.
 
-### Daily backup
+### Data persistence
 
-The service worker uses `chrome.alarms` to run a daily backup via `chrome.downloads`. Backups are saved to `Downloads/TabHoarder/tab-hoarder-backup-{browser}.json` (detects Brave via `navigator.brave`, defaults to `chrome`). First backup runs on install. Both browsers can back up to the same directory with distinct filenames.
+**Two-layer backup system:**
+
+1. **chrome.storage.local** (`src/store/backup.js`) — Automatic mirror of all collections and tabs under key `tab-hoarder-backup`. Debounced sync (2s) on any signal change in the app context. Service worker also syncs after each toolbar save. On startup, if IndexedDB is empty, restores from this backup transparently. Survives browser data clearing (extension-managed storage).
+2. **Daily file backup** (`background.js`) — The service worker uses `chrome.alarms` to download a JSON backup to `Downloads/TabHoarder/tab-hoarder-backup-{browser}.json` (detects Brave via `navigator.brave`, defaults to `chrome`). First backup runs on install. Both browsers can back up to the same directory with distinct filenames.
+
+**Clear all data** — `clearAllData()` in `src/store/db.js` wipes both IndexedDB stores and the chrome.storage.local backup. Exposed via "Clear all data" button in sidebar footer with a danger confirmation dialog.
 
 ### CSS
 
@@ -78,7 +86,7 @@ Returns two objects (`tabDrag`, `collectionDrag`) with `onDragStart/onDragOver/o
 
 Components read signals directly (not via props). Store modules are imported and `.value` is accessed inline. No prop drilling, no context providers.
 
-App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid). Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent. Dropdown menus (move menu in `TabCard`, export menu in `TopBar`) use a ref + `mousedown` listener for outside-click dismissal.
+App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid). `MainContent` renders `JamBanner` at the top (visible when navidrome-jam rooms are active). Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent. Dropdown menus (move menu in `TabCard`, export menu in `TopBar`) use a ref + `mousedown` listener for outside-click dismissal.
 
 ### Import/export
 
@@ -86,6 +94,7 @@ App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainConte
 - **Tab Hoarder format**: `{ version, exportedAt, collections: [...], tabs: [...] }`
 - **Chrome bookmarks import**: `BookmarkImportModal` reads `chrome.bookmarks.getTree()`, flattens folders with URLs, user picks folders via checkboxes, each becomes a collection. Duplicate URLs (already in any collection) are skipped.
 - **Export**: supports exporting all collections or a single active collection via `exportData(collectionId?)`.
+- **Deduplication**: Import matches collections by name — reuses existing ones instead of creating duplicates. Tabs are deduped by URL within each collection. Archive tabs route to the existing archive via `getOrCreateArchive()`.
 
 Import/export logic lives in `src/lib/toby-import.js`, `src/lib/export.js`, and `src/components/BookmarkImportModal.jsx`.
 
@@ -98,10 +107,20 @@ Import/export logic lives in `src/lib/toby-import.js`, `src/lib/export.js`, and 
 
 GitHub Actions workflow (`package-dmg.yml`) runs on `macos-latest` — triggers on manual dispatch or `v*` tag push. Uploads DMG as artifact; on tag push, attaches to GitHub Release.
 
+## Navidrome Jam Integration
+
+`JamBanner` component (`src/components/JamBanner.jsx`) shows active listening rooms from [jam.zhgnv.com](https://jam.zhgnv.com). Polls `GET https://navidrome-jam-production.up.railway.app/api/rooms` every 2 minutes. Displays host name, current track, and a "Join" link. Hidden when no rooms are active. Styled with terracotta accents and animated equalizer bars (`src/styles/jam.css`).
+
+No community filtering — shows all public rooms. Private room filtering will be handled server-side (see navidrome-jam tasks #50–52).
+
+## Icon
+
+Lucide "library" icon (ISC license) on terracotta circle. Source SVG at `public/icons/icon.svg`, PNGs generated via `sharp-cli` at 16/48/128px.
+
 ## Key Constraints
 
 - `base: ''` in `vite.config.js` — Chrome extensions require relative asset paths
 - `background.js` is static (not built) — keep it dependency-free, raw IndexedDB only
-- Bundle size matters — new tab opens on every tab creation. Current: ~50kB JS, ~15kB CSS
-- Permissions (`tabs`, `alarms`, `downloads`, `bookmarks`) — adding new ones requires user to re-approve the extension
+- Bundle size matters — new tab opens on every tab creation. Current: ~53kB JS, ~18kB CSS
+- Permissions (`tabs`, `alarms`, `downloads`, `bookmarks`, `storage`) — adding new ones requires user to re-approve the extension
 - Input handlers: use `onBlur` as the single submit path; `onKeyDown` Enter should just `e.target.blur()` to avoid double-fire

@@ -19,3 +19,11 @@ export async function initDB() {
 export function getDB() {
   return db;
 }
+
+export async function clearAllData() {
+  const tx = db.transaction(['collections', 'tabs'], 'readwrite');
+  await tx.objectStore('collections').clear();
+  await tx.objectStore('tabs').clear();
+  await tx.done;
+  await chrome.storage.local.remove('tab-hoarder-backup');
+}

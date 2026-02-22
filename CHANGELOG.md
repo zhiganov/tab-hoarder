@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Add "Clear all data" button in sidebar — wipes IndexedDB, chrome.storage.local backup, and resets UI
+- Replace logo with Lucide library icon (book spines on terracotta circle)
+
 ## 0.2.0
 
 - Add chrome.storage.local as automatic backup — data survives browser data clearing, restores transparently on startup

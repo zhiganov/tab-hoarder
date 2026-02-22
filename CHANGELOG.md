@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2
+
+- Split save behavior: toolbar icon saves to "Saved Tabs", Alt+S saves to most recently updated collection
+- Fix collection `updatedAt` not updating on tab delete, archive, and cross-collection move
+
 ## 0.2.1
 
 - Add "Clear all data" button in sidebar — wipes IndexedDB, chrome.storage.local backup, and resets UI

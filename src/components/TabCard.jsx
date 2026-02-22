@@ -21,7 +21,7 @@ export function TabCard({ tab, tabDrag }) {
   }, [showMenu]);
 
   const handleClick = () => {
-    window.open(tab.url, '_blank');
+    chrome.tabs.create({ url: tab.url });
   };
 
   const handleRemove = async (e) => {

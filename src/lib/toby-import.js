@@ -8,6 +8,8 @@ export function parseTobyExport(data) {
   if (data.collections && data.tabs) {
     return data.collections.map((col) => ({
       name: col.name,
+      isArchive: col.isArchive || false,
+      color: col.color || null,
       tabs: data.tabs
         .filter((t) => t.collectionId === col.id)
         .map((t) => ({ title: t.title, url: t.url })),

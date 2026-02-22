@@ -1,6 +1,6 @@
 import { useState, useRef } from 'preact/hooks';
 import { parseTobyExport } from '../lib/toby-import';
-import { createCollection } from '../store/collections';
+import { createCollection, getOrCreateArchive } from '../store/collections';
 import { addTabs } from '../store/tabs';
 import { getFaviconUrl } from '../lib/favicon';
 
@@ -17,7 +17,9 @@ export function ImportModal({ onClose }) {
 
       let totalTabs = 0;
       for (const list of lists) {
-        const col = await createCollection(list.name);
+        const col = list.isArchive
+          ? await getOrCreateArchive()
+          : await createCollection(list.name);
         const tabsData = list.tabs.map((t) => ({
           title: t.title,
           url: t.url,

@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { initDB } from './store/db';
 import { loadCollections, activeCollection, collections, getOrCreateArchive } from './store/collections';
-import { loadTabs } from './store/tabs';
+import { allTabs, loadTabs } from './store/tabs';
+import { syncToStorage, restoreFromStorage } from './store/backup';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
 import { MainContent } from './components/MainContent';
@@ -21,8 +22,19 @@ export function App() {
     (async () => {
       await initDB();
       await loadCollections();
-      await getOrCreateArchive();
       await loadTabs();
+
+      // Restore from chrome.storage.local if IndexedDB is empty
+      const hasData = collections.value.length > 0 || allTabs.value.length > 0;
+      if (!hasData) {
+        const restored = await restoreFromStorage();
+        if (restored) {
+          await loadCollections();
+          await loadTabs();
+        }
+      }
+
+      await getOrCreateArchive();
       setReady(true);
     })();
 
@@ -36,6 +48,18 @@ export function App() {
     chrome.runtime?.onMessage?.addListener(listener);
     return () => chrome.runtime?.onMessage?.removeListener(listener);
   }, []);
+
+  // Debounced sync to chrome.storage.local on any data change
+  const skipFirst = useRef(true);
+  useEffect(() => {
+    if (!ready) return;
+    if (skipFirst.current) {
+      skipFirst.current = false;
+      return;
+    }
+    const timer = setTimeout(syncToStorage, 2000);
+    return () => clearTimeout(timer);
+  }, [ready, collections.value, allTabs.value]);
 
   if (!ready) return null;
 

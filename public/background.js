@@ -97,7 +97,14 @@ chrome.action.onClicked.addListener(async (tab) => {
     const favicon = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
 
     await saveTab(db, collection.id, tab.title, tab.url, favicon, maxOrder + 1);
+
+    // Mirror to chrome.storage.local
+    const allCollections = await getAllFromStore(db, 'collections');
+    const allTabs = await getAllFromStore(db, 'tabs');
     db.close();
+    chrome.storage.local.set({
+      'tab-hoarder-backup': { collections: allCollections, tabs: allTabs },
+    });
 
     // Brief badge confirmation
     chrome.action.setBadgeBackgroundColor({ color: '#3d8c40' });

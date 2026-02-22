@@ -1,0 +1,145 @@
+.jam-banner-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: var(--space-md);
+}
+
+.jam-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: box-shadow var(--transition-normal), border-color var(--transition-normal),
+    transform var(--transition-normal);
+  animation: jam-slide-in 0.3s ease-out;
+}
+
+.jam-banner:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* Live indicator group */
+.jam-banner-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.jam-banner-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: jam-pulse 2s ease-in-out infinite;
+}
+
+.jam-banner-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+
+.jam-banner-eq-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.jam-banner-eq-bar:nth-child(1) {
+  animation: jam-eq-1 0.8s ease-in-out infinite;
+}
+
+.jam-banner-eq-bar:nth-child(2) {
+  animation: jam-eq-2 0.6s ease-in-out infinite;
+}
+
+.jam-banner-eq-bar:nth-child(3) {
+  animation: jam-eq-3 0.7s ease-in-out infinite;
+}
+
+/* "Now listening" label */
+.jam-banner-label {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Host name + track info */
+.jam-banner-text {
+  flex: 1;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.jam-banner-text strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.jam-banner-text em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* Join button */
+.jam-banner-join {
+  flex-shrink: 0;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.jam-banner:hover .jam-banner-join {
+  background: var(--accent);
+  color: var(--bg-card);
+}
+
+/* Animations */
+@keyframes jam-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+
+@keyframes jam-eq-1 {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+
+@keyframes jam-eq-2 {
+  0%, 100% { height: 8px; }
+  50% { height: 4px; }
+}
+
+@keyframes jam-eq-3 {
+  0%, 100% { height: 5px; }
+  50% { height: 14px; }
+}
+
+@keyframes jam-slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

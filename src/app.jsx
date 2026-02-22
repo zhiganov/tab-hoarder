@@ -3,6 +3,7 @@ import { initDB } from './store/db';
 import { loadCollections, activeCollection, collections, getOrCreateArchive } from './store/collections';
 import { allTabs, loadTabs } from './store/tabs';
 import { syncToStorage, restoreFromStorage } from './store/backup';
+import { startJamPolling, stopJamPolling } from './store/jam';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
 import { MainContent } from './components/MainContent';
@@ -35,6 +36,7 @@ export function App() {
       }
 
       await getOrCreateArchive();
+      startJamPolling();
       setReady(true);
     })();
 
@@ -46,7 +48,10 @@ export function App() {
       }
     };
     chrome.runtime?.onMessage?.addListener(listener);
-    return () => chrome.runtime?.onMessage?.removeListener(listener);
+    return () => {
+      chrome.runtime?.onMessage?.removeListener(listener);
+      stopJamPolling();
+    };
   }, []);
 
   // Debounced sync to chrome.storage.local on any data change

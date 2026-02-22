@@ -23,10 +23,15 @@ export function Sidebar() {
   const { collectionDrag } = useDragAndDrop();
 
   const handleClearAll = async () => {
-    await clearAllData();
-    await loadCollections();
-    await loadTabs();
-    await getOrCreateArchive();
+    try {
+      await clearAllData();
+      activeCollectionId.value = null;
+      await loadCollections();
+      await loadTabs();
+      await getOrCreateArchive();
+    } catch (err) {
+      console.error('Tab Hoarder: clear all data failed', err);
+    }
     setShowClear(false);
   };
 

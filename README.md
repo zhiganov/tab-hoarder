@@ -19,6 +19,9 @@ Chrome/Brave extension for managing browser tabs locally. Like [Toby](https://ww
 - Import Chrome bookmark folders as collections (with duplicate URL detection)
 - Export all collections or just the current one as JSON
 - Daily automatic backup to `Downloads/TabHoarder/` (browser-specific filenames)
+- Automatic chrome.storage.local backup — survives browser data clearing, restores transparently
+- Smart import deduplication — matches collections by name, skips duplicate URLs
+- Navidrome Jam live room widget — see friends listening to music, join with one click
 - Light and dark mode (follows system preference)
 
 ## Install
@@ -50,6 +53,10 @@ After building, reload the extension in `chrome://extensions`.
 - **idb** — IndexedDB wrapper
 - **Vite** — build tool
 - **Custom CSS** — warm parchment/terracotta design, dark mode
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## License
 

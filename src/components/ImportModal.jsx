@@ -1,7 +1,7 @@
 import { useState, useRef } from 'preact/hooks';
 import { parseTobyExport } from '../lib/toby-import';
-import { createCollection, getOrCreateArchive } from '../store/collections';
-import { addTabs } from '../store/tabs';
+import { collections, createCollection, getOrCreateArchive } from '../store/collections';
+import { allTabs, addTabs } from '../store/tabs';
 import { getFaviconUrl } from '../lib/favicon';
 
 export function ImportModal({ onClose }) {
@@ -16,22 +16,41 @@ export function ImportModal({ onClose }) {
       const lists = parseTobyExport(data);
 
       let totalTabs = 0;
+      let skippedTabs = 0;
       for (const list of lists) {
-        const col = list.isArchive
-          ? await getOrCreateArchive()
-          : await createCollection(list.name);
-        const tabsData = list.tabs.map((t) => ({
+        let col;
+        if (list.isArchive) {
+          col = await getOrCreateArchive();
+        } else {
+          const existing = collections.value.find(
+            (c) => !c.isArchive && c.name === list.name
+          );
+          col = existing || await createCollection(list.name);
+        }
+
+        const existingUrls = new Set(
+          allTabs.value
+            .filter((t) => t.collectionId === col.id)
+            .map((t) => t.url)
+        );
+        const newTabs = list.tabs.filter((t) => !existingUrls.has(t.url));
+        skippedTabs += list.tabs.length - newTabs.length;
+
+        const tabsData = newTabs.map((t) => ({
           title: t.title,
           url: t.url,
           favicon: getFaviconUrl(t.url),
         }));
-        await addTabs(col.id, tabsData);
+        if (tabsData.length > 0) {
+          await addTabs(col.id, tabsData);
+        }
         totalTabs += tabsData.length;
       }
 
+      const skippedMsg = skippedTabs > 0 ? ` (${skippedTabs} duplicates skipped)` : '';
       setStatus({
         type: 'success',
-        message: `Imported ${lists.length} collections with ${totalTabs} tabs.`,
+        message: `Imported ${totalTabs} tabs${skippedMsg}.`,
       });
     } catch (err) {
       setStatus({

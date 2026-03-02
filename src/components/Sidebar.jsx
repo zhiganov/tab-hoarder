@@ -3,37 +3,19 @@ import {
   activeCollectionId,
   archiveCollection,
   regularCollections,
-  collections,
   createCollection,
-  loadCollections,
-  getOrCreateArchive,
 } from '../store/collections';
-import { allTabs, loadTabs } from '../store/tabs';
+import { allTabs } from '../store/tabs';
 import { collectionSort, setCollectionSort } from '../store/sort';
-import { clearAllData } from '../store/db';
+import { settingsOpen } from '../store/settings';
 import { CollectionItem } from './CollectionItem';
 import { SortMenu } from './SortMenu';
-import { ConfirmDialog } from './ConfirmDialog';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
 export function Sidebar() {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
-  const [showClear, setShowClear] = useState(false);
   const { collectionDrag } = useDragAndDrop();
-
-  const handleClearAll = async () => {
-    try {
-      await clearAllData();
-      activeCollectionId.value = null;
-      await loadCollections();
-      await loadTabs();
-      await getOrCreateArchive();
-    } catch (err) {
-      console.error('Tab Hoarder: clear all data failed', err);
-    }
-    setShowClear(false);
-  };
 
   const handleAdd = async () => {
     const name = newName.trim();
@@ -77,7 +59,7 @@ export function Sidebar() {
               collection={col}
               count={count}
               active={col.id === activeCollectionId.value}
-              onSelect={() => (activeCollectionId.value = col.id)}
+              onSelect={() => { activeCollectionId.value = col.id; settingsOpen.value = false; }}
               collectionDrag={collectionDrag}
             />
           );
@@ -92,7 +74,7 @@ export function Sidebar() {
           return (
             <div
               class={`collection-item archive-item ${archive.id === activeCollectionId.value ? 'active' : ''}`}
-              onClick={() => (activeCollectionId.value = archive.id)}
+              onClick={() => { activeCollectionId.value = archive.id; settingsOpen.value = false; }}
               onDragOver={(e) => collectionDrag.onDragOver(e, archive.id)}
               onDragLeave={(e) => collectionDrag.onDragLeave(e)}
               onDrop={(e) => collectionDrag.onDrop(e, archive.id)}
@@ -132,27 +114,7 @@ export function Sidebar() {
             New collection
           </button>
         )}
-        <button
-          class="clear-all-btn"
-          onClick={() => setShowClear(true)}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          </svg>
-          Clear all data
-        </button>
       </div>
-      {showClear && (
-        <ConfirmDialog
-          title="Clear all data?"
-          message="This will permanently delete all collections, tabs, and backups. This cannot be undone. Consider exporting first."
-          confirmLabel="Clear everything"
-          danger
-          onConfirm={handleClearAll}
-          onCancel={() => setShowClear(false)}
-        />
-      )}
     </div>
   );
 }

@@ -1,29 +1,10 @@
-import { useState, useRef, useEffect } from 'preact/hooks';
 import { SearchBar } from './SearchBar';
-import { activeCollection, activeCollectionId, createCollection } from '../store/collections';
+import { createCollection } from '../store/collections';
 import { addTabs } from '../store/tabs';
 import { getFaviconUrl } from '../lib/favicon';
-import { ImportModal } from './ImportModal';
-import { BookmarkImportModal } from './BookmarkImportModal';
-import { exportData } from '../lib/export';
+import { settingsOpen } from '../store/settings';
 
 export function TopBar() {
-  const [showImport, setShowImport] = useState(false);
-  const [showBookmarks, setShowBookmarks] = useState(false);
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const exportMenuRef = useRef(null);
-
-  useEffect(() => {
-    if (!showExportMenu) return;
-    const handleClick = (e) => {
-      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
-        setShowExportMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [showExportMenu]);
-
   const handleSaveAllTabs = async () => {
     try {
       const response = await chrome.runtime.sendMessage({ type: 'GET_ALL_TABS' });
@@ -54,57 +35,28 @@ export function TopBar() {
   };
 
   return (
-    <>
-      <div class="topbar">
-        <SearchBar />
-        <div class="topbar-actions">
-          <button class="topbar-btn" onClick={handleSaveAllTabs} title="Save all open tabs to the active collection">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="2" width="20" height="20" rx="2" />
-              <path d="M12 8v8M8 12h8" />
-            </svg>
-            Save all tabs
-          </button>
-          <button class="topbar-btn" onClick={() => setShowBookmarks(true)} title="Import bookmark folders as collections">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-            </svg>
-            Bookmarks
-          </button>
-          <button class="topbar-btn" onClick={() => setShowImport(true)} title="Import tabs from Toby or JSON">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Import
-          </button>
-          <div class="topbar-btn-wrap" ref={exportMenuRef}>
-            <button class="topbar-btn" onClick={() => setShowExportMenu(!showExportMenu)} title="Export data as JSON">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              Export
-            </button>
-            {showExportMenu && (
-              <div class="topbar-dropdown">
-                <button class="topbar-dropdown-item" onClick={() => { exportData(); setShowExportMenu(false); }}>
-                  All collections
-                </button>
-                {activeCollectionId.value && (
-                  <button class="topbar-dropdown-item" onClick={() => { exportData(activeCollectionId.value); setShowExportMenu(false); }}>
-                    {activeCollection.value?.name || 'Current collection'}
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+    <div class="topbar">
+      <SearchBar />
+      <div class="topbar-actions">
+        <button class="topbar-btn" onClick={handleSaveAllTabs} title="Save all open tabs to a new collection">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="2" />
+            <path d="M12 8v8M8 12h8" />
+          </svg>
+          Save all tabs
+        </button>
+        <button
+          class={`topbar-btn ${settingsOpen.value ? 'active' : ''}`}
+          onClick={() => (settingsOpen.value = !settingsOpen.value)}
+          title="Settings"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          Settings
+        </button>
       </div>
-      {showImport && <ImportModal onClose={() => setShowImport(false)} />}
-      {showBookmarks && <BookmarkImportModal onClose={() => setShowBookmarks(false)} />}
-    </>
+    </div>
   );
 }

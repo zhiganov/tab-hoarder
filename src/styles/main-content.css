@@ -32,6 +32,11 @@
   color: var(--text-primary);
 }
 
+.topbar-btn.active {
+  color: var(--accent);
+  background: var(--accent-subtle);
+}
+
 .topbar-btn.primary {
   background: var(--accent);
   color: var(--text-inverse);

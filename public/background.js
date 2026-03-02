@@ -132,12 +132,16 @@ async function saveAndCloseTab(tab, collection) {
   chrome.runtime.sendMessage({ type: 'DATA_CHANGED' }).catch(() => {});
 }
 
-// Toolbar icon click: save to "Saved Tabs" collection
+// Toolbar icon click: save based on setting (default: "Saved Tabs")
 chrome.action.onClicked.addListener(async (tab) => {
   if (tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) return;
   try {
+    const settings = await chrome.storage.local.get('tab-hoarder-toolbar-target');
+    const target = settings['tab-hoarder-toolbar-target'] || 'saved-tabs';
     const db = await openDB();
-    const collection = await getSavedTabsCollection(db);
+    const collection = target === 'most-recent'
+      ? await getRecentCollection(db)
+      : await getSavedTabsCollection(db);
     db.close();
     await saveAndCloseTab(tab, collection);
   } catch (err) {
@@ -145,14 +149,18 @@ chrome.action.onClicked.addListener(async (tab) => {
   }
 });
 
-// Alt+S shortcut: save to most recently updated collection
+// Alt+S shortcut: save based on setting (default: most recent collection)
 chrome.commands.onCommand.addListener(async (command) => {
   if (command !== 'save-to-recent') return;
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (!tab || tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) return;
+    const settings = await chrome.storage.local.get('tab-hoarder-shortcut-target');
+    const target = settings['tab-hoarder-shortcut-target'] || 'most-recent';
     const db = await openDB();
-    const collection = await getRecentCollection(db);
+    const collection = target === 'saved-tabs'
+      ? await getSavedTabsCollection(db)
+      : await getRecentCollection(db);
     db.close();
     await saveAndCloseTab(tab, collection);
   } catch (err) {
@@ -178,6 +186,9 @@ function getBrowserName() {
 
 async function runBackup() {
   try {
+    const settings = await chrome.storage.local.get('tab-hoarder-daily-backup');
+    if (settings['tab-hoarder-daily-backup'] === false) return;
+
     const db = await openDB();
     const collections = await getAllFromStore(db, 'collections');
     const tabs = await getAllFromStore(db, 'tabs');
@@ -208,15 +219,24 @@ async function runBackup() {
 }
 
 // Set up daily backup alarm
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.alarms.create('daily-backup', { periodInMinutes: 24 * 60 });
-  // Run first backup immediately
+chrome.runtime.onInstalled.addListener(async () => {
+  const settings = await chrome.storage.local.get('tab-hoarder-backup-interval');
+  const minutes = parseInt(settings['tab-hoarder-backup-interval']) || 1440;
+  chrome.alarms.create('daily-backup', { periodInMinutes: minutes });
   runBackup();
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'daily-backup') {
     runBackup();
+  }
+});
+
+// Update alarm when backup interval setting changes
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes['tab-hoarder-backup-interval']) {
+    const minutes = parseInt(changes['tab-hoarder-backup-interval'].newValue) || 1440;
+    chrome.alarms.create('daily-backup', { periodInMinutes: minutes });
   }
 });
 

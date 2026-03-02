@@ -217,24 +217,6 @@
   transform: translateX(17px);
 }
 
-/* --- Select dropdown --- */
-.settings-select {
-  padding: 5px var(--space-sm);
-  font-size: 12px;
-  font-weight: 500;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: border-color var(--transition-fast);
-}
-
-.settings-select:focus {
-  border-color: var(--border-active);
-  outline: none;
-}
-
 /* --- Segmented control (replaces native radio buttons) --- */
 .settings-segment {
   display: flex;

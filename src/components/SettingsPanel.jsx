@@ -244,19 +244,20 @@ export function SettingsPanel() {
                 <div>
                   <div class="settings-label">Frequency</div>
                 </div>
-                <select
-                  class="settings-select"
-                  value={backupInterval}
-                  onChange={(e) => {
-                    setBackupInterval(e.target.value);
-                    saveChromeStorage('tab-hoarder-backup-interval', e.target.value);
-                  }}
-                >
-                  <option value="720">Every 12 hours</option>
-                  <option value="1440">Every day</option>
-                  <option value="4320">Every 3 days</option>
-                  <option value="10080">Weekly</option>
-                </select>
+                <div class="settings-segment">
+                  {[
+                    { value: '720', label: '12h' },
+                    { value: '1440', label: 'Daily' },
+                    { value: '4320', label: '3 days' },
+                    { value: '10080', label: 'Weekly' },
+                  ].map(opt => (
+                    <button
+                      key={opt.value}
+                      class={`settings-segment-btn ${backupInterval === opt.value ? 'active' : ''}`}
+                      onClick={() => { setBackupInterval(opt.value); saveChromeStorage('tab-hoarder-backup-interval', opt.value); }}
+                    >{opt.label}</button>
+                  ))}
+                </div>
               </div>
             </div>
 

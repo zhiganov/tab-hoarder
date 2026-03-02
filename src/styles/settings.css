@@ -1,0 +1,197 @@
+.settings-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-xl);
+  max-width: 640px;
+}
+
+.settings-panel h1 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-xl);
+}
+
+.settings-section {
+  margin-bottom: var(--space-xl);
+}
+
+.settings-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-md);
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+}
+
+.settings-row + .settings-row {
+  border-top: 1px solid var(--border);
+}
+
+.settings-label {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.settings-description {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Theme toggle buttons */
+.theme-toggle {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.theme-toggle-btn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.theme-toggle-btn.active {
+  background: var(--accent);
+  color: var(--text-inverse);
+}
+
+/* Accent color swatches */
+.accent-swatches {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.accent-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  border: 2px solid transparent;
+}
+
+.accent-swatch:hover {
+  transform: scale(1.15);
+}
+
+.accent-swatch.active {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-primary);
+}
+
+/* Toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background: var(--border);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.toggle-switch.on {
+  background: var(--accent);
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+}
+
+.toggle-switch.on::after {
+  transform: translateX(18px);
+}
+
+/* Select dropdown */
+.settings-select {
+  padding: var(--space-xs) var(--space-sm);
+  font-size: 13px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.settings-select:focus {
+  border-color: var(--border-active);
+  outline: none;
+}
+
+/* Save target radio group */
+.settings-radio-group {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.settings-radio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.settings-radio input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+/* Data action buttons */
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.settings-action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.settings-action-btn:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.settings-action-btn.danger {
+  color: #c44040;
+}
+
+.settings-action-btn.danger:hover {
+  background: rgba(196, 64, 64, 0.1);
+}

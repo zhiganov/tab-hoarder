@@ -2,7 +2,7 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-xl);
-  max-width: 640px;
+  max-width: 600px;
 }
 
 .settings-panel h1 {
@@ -11,105 +11,145 @@
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-lg);
 }
 
+/* --- Section cards --- */
 .settings-section {
-  margin-bottom: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .settings-section-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border);
 }
 
+/* --- Rows --- */
 .settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-sm) 0;
+  padding: 10px 0;
+  gap: var(--space-lg);
 }
 
 .settings-row + .settings-row {
-  border-top: 1px solid var(--border);
+  border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
 }
 
 .settings-label {
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-primary);
 }
 
 .settings-description {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
   margin-top: 2px;
 }
 
-/* Theme toggle buttons */
+/* --- Theme toggle (sun/moon icons) --- */
 .theme-toggle {
   display: flex;
   gap: 2px;
   background: var(--bg-secondary);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 2px;
 }
 
 .theme-toggle-btn {
-  padding: var(--space-xs) var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 5px 12px;
   border-radius: calc(var(--radius-sm) - 2px);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
   color: var(--text-secondary);
-  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .theme-toggle-btn.active {
-  background: var(--accent);
-  color: var(--text-inverse);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
 }
 
-/* Accent color swatches */
+.theme-toggle-btn svg {
+  flex-shrink: 0;
+}
+
+/* --- Accent swatches --- */
 .accent-swatches {
   display: flex;
-  gap: var(--space-sm);
+  gap: 6px;
 }
 
 .accent-swatch {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   cursor: pointer;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   border: 2px solid transparent;
+  position: relative;
 }
 
 .accent-swatch:hover {
-  transform: scale(1.15);
+  transform: scale(1.2);
 }
 
 .accent-swatch.active {
   border-color: var(--text-primary);
-  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--text-primary);
+  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--text-muted);
 }
 
-/* Toggle switch */
+/* Checkmark inside active swatch */
+.accent-swatch.active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: translate(-50%, -55%) rotate(45deg);
+}
+
+/* --- Toggle switch --- */
 .toggle-switch {
   position: relative;
-  width: 40px;
-  height: 22px;
-  background: var(--border);
+  width: 38px;
+  height: 21px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
   border-radius: 11px;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
   flex-shrink: 0;
 }
 
 .toggle-switch.on {
   background: var(--accent);
+  border-color: var(--accent);
 }
 
 .toggle-switch::after {
@@ -117,26 +157,29 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   background: white;
   border-radius: 50%;
   transition: transform var(--transition-fast);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .toggle-switch.on::after {
-  transform: translateX(18px);
+  transform: translateX(17px);
 }
 
-/* Select dropdown */
+/* --- Select dropdown --- */
 .settings-select {
-  padding: var(--space-xs) var(--space-sm);
-  font-size: 13px;
-  background: var(--bg-input);
+  padding: 5px var(--space-sm);
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--bg-secondary);
   color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: border-color var(--transition-fast);
 }
 
 .settings-select:focus {
@@ -144,26 +187,37 @@
   outline: none;
 }
 
-/* Save target radio group */
-.settings-radio-group {
+/* --- Segmented control (replaces native radio buttons) --- */
+.settings-segment {
   display: flex;
-  gap: var(--space-md);
+  gap: 2px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
 }
 
-.settings-radio {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  font-size: 13px;
+.settings-segment-btn {
+  padding: 5px 12px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.settings-segment-btn:hover {
+  color: var(--text-secondary);
+}
+
+.settings-segment-btn.active {
+  background: var(--bg-card);
   color: var(--text-primary);
-  cursor: pointer;
+  box-shadow: var(--shadow-sm);
 }
 
-.settings-radio input[type="radio"] {
-  accent-color: var(--accent);
-}
-
-/* Data action buttons */
+/* --- Data action buttons --- */
 .settings-actions {
   display: flex;
   flex-wrap: wrap;
@@ -173,25 +227,54 @@
 .settings-action-btn {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
+  gap: 5px;
+  padding: 7px 12px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
   background: var(--bg-secondary);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  border: 1px solid var(--border);
+  transition: all var(--transition-fast);
 }
 
 .settings-action-btn:hover {
-  background: var(--border);
+  background: var(--bg-card-hover);
+  border-color: var(--text-muted);
   color: var(--text-primary);
 }
 
+.settings-action-btn svg {
+  opacity: 0.6;
+}
+
+.settings-action-btn:hover svg {
+  opacity: 1;
+}
+
+/* Danger zone separator */
+.settings-danger-zone {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed color-mix(in srgb, #c44040 30%, var(--border));
+}
+
 .settings-action-btn.danger {
-  color: #c44040;
+  color: var(--text-muted);
+  border-color: transparent;
+  background: transparent;
 }
 
 .settings-action-btn.danger:hover {
-  background: rgba(196, 64, 64, 0.1);
+  color: #c44040;
+  background: rgba(196, 64, 64, 0.06);
+  border-color: rgba(196, 64, 64, 0.2);
+}
+
+.settings-action-btn.danger svg {
+  opacity: 0.4;
+}
+
+.settings-action-btn.danger:hover svg {
+  opacity: 1;
 }

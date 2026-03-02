@@ -11,8 +11,8 @@ import { ImportModal } from './ImportModal';
 import { BookmarkImportModal } from './BookmarkImportModal';
 import { ConfirmDialog } from './ConfirmDialog';
 import { clearAllData } from '../store/db';
-import { loadCollections, collections, getOrCreateArchive } from '../store/collections';
-import { allTabs, loadTabs } from '../store/tabs';
+import { loadCollections, getOrCreateArchive } from '../store/collections';
+import { loadTabs } from '../store/tabs';
 import '../styles/settings.css';
 
 export function SettingsPanel() {
@@ -86,11 +86,29 @@ export function SettingsPanel() {
               <button
                 class={`theme-toggle-btn ${!isDark ? 'active' : ''}`}
                 onClick={() => setTheme('light')}
-              >Light</button>
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+                Light
+              </button>
               <button
                 class={`theme-toggle-btn ${isDark ? 'active' : ''}`}
                 onClick={() => setTheme('dark')}
-              >Dark</button>
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+                Dark
+              </button>
             </div>
           </div>
 
@@ -118,55 +136,35 @@ export function SettingsPanel() {
 
           <div class="settings-row">
             <div>
-              <div class="settings-label">Toolbar icon click</div>
-              <div class="settings-description">What happens when you click the extension icon</div>
+              <div class="settings-label">Toolbar icon</div>
+              <div class="settings-description">Click the extension icon</div>
             </div>
-            <div class="settings-radio-group">
-              <label class="settings-radio">
-                <input
-                  type="radio"
-                  name="toolbar-target"
-                  checked={toolbarTarget === 'saved-tabs'}
-                  onChange={() => { setToolbarTarget('saved-tabs'); saveChromeStorage('tab-hoarder-toolbar-target', 'saved-tabs'); }}
-                />
-                Saved Tabs
-              </label>
-              <label class="settings-radio">
-                <input
-                  type="radio"
-                  name="toolbar-target"
-                  checked={toolbarTarget === 'most-recent'}
-                  onChange={() => { setToolbarTarget('most-recent'); saveChromeStorage('tab-hoarder-toolbar-target', 'most-recent'); }}
-                />
-                Most recent
-              </label>
+            <div class="settings-segment">
+              <button
+                class={`settings-segment-btn ${toolbarTarget === 'saved-tabs' ? 'active' : ''}`}
+                onClick={() => { setToolbarTarget('saved-tabs'); saveChromeStorage('tab-hoarder-toolbar-target', 'saved-tabs'); }}
+              >Saved Tabs</button>
+              <button
+                class={`settings-segment-btn ${toolbarTarget === 'most-recent' ? 'active' : ''}`}
+                onClick={() => { setToolbarTarget('most-recent'); saveChromeStorage('tab-hoarder-toolbar-target', 'most-recent'); }}
+              >Most recent</button>
             </div>
           </div>
 
           <div class="settings-row">
             <div>
               <div class="settings-label">Alt+S shortcut</div>
-              <div class="settings-description">What happens when you press Alt+S</div>
+              <div class="settings-description">Keyboard shortcut save</div>
             </div>
-            <div class="settings-radio-group">
-              <label class="settings-radio">
-                <input
-                  type="radio"
-                  name="shortcut-target"
-                  checked={shortcutTarget === 'most-recent'}
-                  onChange={() => { setShortcutTarget('most-recent'); saveChromeStorage('tab-hoarder-shortcut-target', 'most-recent'); }}
-                />
-                Most recent
-              </label>
-              <label class="settings-radio">
-                <input
-                  type="radio"
-                  name="shortcut-target"
-                  checked={shortcutTarget === 'saved-tabs'}
-                  onChange={() => { setShortcutTarget('saved-tabs'); saveChromeStorage('tab-hoarder-shortcut-target', 'saved-tabs'); }}
-                />
-                Saved Tabs
-              </label>
+            <div class="settings-segment">
+              <button
+                class={`settings-segment-btn ${shortcutTarget === 'most-recent' ? 'active' : ''}`}
+                onClick={() => { setShortcutTarget('most-recent'); saveChromeStorage('tab-hoarder-shortcut-target', 'most-recent'); }}
+              >Most recent</button>
+              <button
+                class={`settings-segment-btn ${shortcutTarget === 'saved-tabs' ? 'active' : ''}`}
+                onClick={() => { setShortcutTarget('saved-tabs'); saveChromeStorage('tab-hoarder-shortcut-target', 'saved-tabs'); }}
+              >Saved Tabs</button>
             </div>
           </div>
         </div>
@@ -178,7 +176,7 @@ export function SettingsPanel() {
           <div class="settings-row">
             <div>
               <div class="settings-label">Show listening rooms</div>
-              <div class="settings-description">Display active jam rooms from jam.zhgnv.com</div>
+              <div class="settings-description">Active jam rooms from jam.zhgnv.com</div>
             </div>
             <div
               class={`toggle-switch ${jamEnabled.value ? 'on' : ''}`}
@@ -196,7 +194,7 @@ export function SettingsPanel() {
           <div class="settings-row">
             <div>
               <div class="settings-label">Daily file backup</div>
-              <div class="settings-description">Save backup to Downloads/TabHoarder/</div>
+              <div class="settings-description">Downloads/TabHoarder/</div>
             </div>
             <div
               class={`toggle-switch ${dailyBackup ? 'on' : ''}`}
@@ -212,7 +210,7 @@ export function SettingsPanel() {
 
           <div class="settings-row">
             <div>
-              <div class="settings-label">Backup frequency</div>
+              <div class="settings-label">Frequency</div>
             </div>
             <select
               class="settings-select"
@@ -236,7 +234,7 @@ export function SettingsPanel() {
 
           <div class="settings-actions">
             <button class="settings-action-btn" onClick={() => setShowImport(true)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
@@ -244,13 +242,13 @@ export function SettingsPanel() {
               Import JSON
             </button>
             <button class="settings-action-btn" onClick={() => setShowBookmarks(true)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
-              Import bookmarks
+              Bookmarks
             </button>
             <button class="settings-action-btn" onClick={() => exportData()}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="17 8 12 3 7 8" />
                 <line x1="12" y1="3" x2="12" y2="15" />
@@ -259,7 +257,7 @@ export function SettingsPanel() {
             </button>
             {activeCollectionId.value && (
               <button class="settings-action-btn" onClick={() => exportData(activeCollectionId.value)}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -267,8 +265,10 @@ export function SettingsPanel() {
                 Export current
               </button>
             )}
+          </div>
+          <div class="settings-danger-zone">
             <button class="settings-action-btn danger" onClick={() => setShowClear(true)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6" />
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
               </svg>

@@ -75,12 +75,9 @@ export function App() {
       <Sidebar />
       <div class="main-area">
         <TopBar />
-        {settingsOpen.value
-          ? <SettingsPanel />
-          : searchQuery.value
-            ? <SearchResults />
-            : <MainContent />}
+        {searchQuery.value ? <SearchResults /> : <MainContent />}
       </div>
+      {settingsOpen.value && <SettingsPanel />}
     </div>
   );
 }

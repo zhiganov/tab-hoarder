@@ -94,7 +94,7 @@ Returns two objects (`tabDrag`, `collectionDrag`) with `onDragStart/onDragOver/o
 
 Components read signals directly (not via props). Store modules are imported and `.value` is accessed inline. No prop drilling, no context providers.
 
-App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid) or `SettingsPanel`. When `settingsOpen` signal is true, `SettingsPanel` replaces `MainContent`. Clicking a collection in the sidebar closes settings. `MainContent` conditionally renders `JamBanner` based on `jamEnabled` setting. Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent (now in `SettingsPanel` for import/export/clear). Dropdown menus (move menu in `TabCard`) use a ref + `mousedown` listener for outside-click dismissal.
+App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid). `SettingsPanel` renders as a modal overlay when `settingsOpen` signal is true — it does not replace MainContent. Clicking a collection in the sidebar closes settings. `MainContent` conditionally renders `JamBanner` based on `jamEnabled` setting. Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent (now in `SettingsPanel` for import/export/clear). Dropdown menus (move menu in `TabCard`) use a ref + `mousedown` listener for outside-click dismissal. Settings modal closes on Escape key or clicking outside.
 
 ### Settings
 

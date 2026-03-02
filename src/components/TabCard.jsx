@@ -66,9 +66,9 @@ export function TabCard({ tab, tabDrag }) {
           e.target.style.display = 'none';
         }}
       />
-      <div class="tab-info" title={tab.url}>
-        <div class="tab-title">{tab.title}</div>
-        <div class="tab-domain">{getDomain(tab.url)}</div>
+      <div class="tab-info">
+        <div class="tab-title" title={tab.title}>{tab.title}</div>
+        <div class="tab-domain" title={tab.url}>{getDomain(tab.url)}</div>
       </div>
       <div class="tab-actions" ref={menuRef}>
         {otherCollections.length > 0 && (

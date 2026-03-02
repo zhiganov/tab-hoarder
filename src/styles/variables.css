@@ -45,8 +45,7 @@
   --transition-normal: 200ms ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+[data-theme="dark"] {
     --bg-primary: #1a1814;
     --bg-secondary: #242019;
     --bg-sidebar: #1e1b16;
@@ -70,5 +69,4 @@
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
-  }
 }

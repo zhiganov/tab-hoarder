@@ -141,6 +141,10 @@ No community filtering — shows all public rooms. Private room filtering will b
 
 Lucide "library" icon (ISC license) on terracotta circle. Source SVG at `public/icons/icon.svg`, PNGs generated via `sharp-cli` at 16/48/128px.
 
+## Testing
+
+No test framework. Manual testing only — build, reload extension, verify in browser.
+
 ## Key Constraints
 
 - `base: ''` in `vite.config.js` — Chrome extensions require relative asset paths

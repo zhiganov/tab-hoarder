@@ -7,6 +7,7 @@ import { EmptyState } from './EmptyState';
 import { SortMenu } from './SortMenu';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { JamBanner } from './JamBanner';
+import { jamEnabled } from '../store/settings';
 
 export function MainContent() {
   const collection = activeCollection.value;
@@ -18,7 +19,7 @@ export function MainContent() {
   if (!collection) {
     return (
       <div class="main-content">
-        <JamBanner />
+        {jamEnabled.value && <JamBanner />}
         <EmptyState
           title="No collections yet"
           text="Create your first collection from the sidebar to start saving tabs."
@@ -37,7 +38,7 @@ export function MainContent() {
 
   return (
     <div class="main-content">
-      <JamBanner />
+      {jamEnabled.value && <JamBanner />}
       <div class="collection-header">
         <div class="collection-title-row">
           {editing ? (

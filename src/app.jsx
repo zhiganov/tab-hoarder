@@ -4,10 +4,12 @@ import { loadCollections, activeCollection, collections, getOrCreateArchive } fr
 import { allTabs, loadTabs } from './store/tabs';
 import { syncToStorage, restoreFromStorage } from './store/backup';
 import { startJamPolling, stopJamPolling } from './store/jam';
+import { settingsOpen, jamEnabled } from './store/settings';
 import { TopBar } from './components/TopBar';
 import { Sidebar } from './components/Sidebar';
 import { MainContent } from './components/MainContent';
 import { SearchResults } from './components/SearchResults';
+import { SettingsPanel } from './components/SettingsPanel';
 import { searchQuery } from './store/search';
 import './styles/sidebar.css';
 import './styles/main-content.css';
@@ -36,7 +38,7 @@ export function App() {
       }
 
       await getOrCreateArchive();
-      startJamPolling();
+      if (jamEnabled.value) startJamPolling();
       setReady(true);
     })();
 
@@ -73,7 +75,11 @@ export function App() {
       <Sidebar />
       <div class="main-area">
         <TopBar />
-        {searchQuery.value ? <SearchResults /> : <MainContent />}
+        {settingsOpen.value
+          ? <SettingsPanel />
+          : searchQuery.value
+            ? <SearchResults />
+            : <MainContent />}
       </div>
     </div>
   );

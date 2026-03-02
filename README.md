@@ -22,7 +22,11 @@ Chrome/Brave extension for managing browser tabs locally. Like [Toby](https://ww
 - Automatic chrome.storage.local backup — survives browser data clearing, restores transparently
 - Smart import deduplication — matches collections by name, skips duplicate URLs
 - Navidrome Jam live room widget — see friends listening to music, join with one click
-- Light and dark mode (follows system preference)
+- **Settings panel** — gear icon in toolbar opens a modal with all preferences
+- **Light and dark theme** toggle (manual control, not just system preference)
+- **Accent color picker** — 6 preset palettes (terracotta, ocean, forest, plum, slate, amber)
+- Configurable save behavior — choose what toolbar icon click and Alt+S do
+- Configurable backup frequency (12h, daily, 3 days, weekly) and toggle
 
 ## Install
 

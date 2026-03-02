@@ -38,6 +38,7 @@ All UI state uses `@preact/signals` — no React-style prop drilling:
 
 - `src/store/backup.js` — `syncToStorage()` mirrors signals to chrome.storage.local, `restoreFromStorage()` restores IndexedDB from backup
 - `src/store/jam.js` — `jamRooms` signal (array), `startJamPolling()`/`stopJamPolling()` — polls navidrome-jam API every 2 minutes
+- `src/store/settings.js` — `theme` (light/dark), `accentName`, `jamEnabled`, `settingsOpen` signals. `ACCENT_COLORS` palette (6 colors with light/dark variants). `setTheme()` applies `data-theme` attribute, `setAccent()` applies CSS custom properties, `initSettings()` called before render
 
 Each store module exports async CRUD functions that update both IndexedDB and the signal in one call.
 
@@ -50,10 +51,10 @@ Each store module exports async CRUD functions that update both IndexedDB and th
 
 ### Save-and-close behavior
 
-Two separate save targets via `background.js`:
+Two separate save targets via `background.js`, configurable in Settings:
 
-- **Toolbar icon click** (`chrome.action.onClicked`) — saves to the "Saved Tabs" collection (creates it if missing)
-- **Alt+S shortcut** (`chrome.commands.onCommand: save-to-recent`) — saves to the most recently updated collection (by `updatedAt`)
+- **Toolbar icon click** (`chrome.action.onClicked`) — default: saves to "Saved Tabs" collection. Configurable via `tab-hoarder-toolbar-target` in chrome.storage.local.
+- **Alt+S shortcut** (`chrome.commands.onCommand: save-to-recent`) — default: saves to most recently updated collection. Configurable via `tab-hoarder-shortcut-target` in chrome.storage.local.
 
 Both use the shared `saveAndCloseTab()` helper which writes to IndexedDB, mirrors to chrome.storage.local, shows a badge confirmation, closes the tab, and sends a `DATA_CHANGED` message to refresh open new tab pages.
 
@@ -66,13 +67,13 @@ Note: Alt+S is a named command (not `_execute_action`), so users may need to set
 1. **chrome.storage.local** (`src/store/backup.js`) — Automatic mirror of all collections and tabs under key `tab-hoarder-backup`. Debounced sync (2s) on any signal change in the app context. Service worker also syncs after each toolbar save. On startup, if IndexedDB is empty, restores from this backup transparently. Survives browser data clearing (extension-managed storage).
 2. **Daily file backup** (`background.js`) — The service worker uses `chrome.alarms` to download a JSON backup to `Downloads/TabHoarder/tab-hoarder-backup-{browser}.json` (detects Brave via `navigator.brave`, defaults to `chrome`). First backup runs on install. Both browsers can back up to the same directory with distinct filenames.
 
-**Clear all data** — `clearAllData()` in `src/store/db.js` wipes both IndexedDB stores and the chrome.storage.local backup. Exposed via "Clear all data" button in sidebar footer with a danger confirmation dialog.
+**Clear all data** — `clearAllData()` in `src/store/db.js` wipes both IndexedDB stores and the chrome.storage.local backup. Exposed via "Clear all data" button in Settings > Data with a danger confirmation dialog.
 
 ### CSS
 
-Custom CSS with variables in `src/styles/variables.css`. Dark mode via `@media (prefers-color-scheme: dark)` overriding CSS custom properties. No CSS framework.
+Custom CSS with variables in `src/styles/variables.css`. Dark mode via `[data-theme="dark"]` selector overriding CSS custom properties. Theme is set by `initSettings()` before render via `data-theme` attribute on `<html>`. No CSS framework.
 
-Design palette: cream/parchment + terracotta (light), warm grays + amber (dark). Fonts: Libre Baskerville (display) + Inter (body) via Google Fonts.
+Design palette: cream/parchment + terracotta (light), warm grays + amber (dark). Accent colors are customizable — 6 presets applied via `document.documentElement.style.setProperty()` on `--accent`, `--accent-hover`, `--accent-subtle`, `--border-active`. Fonts: Libre Baskerville (display) + Inter (body) via Google Fonts.
 
 ## Data Model (IndexedDB)
 
@@ -93,7 +94,23 @@ Returns two objects (`tabDrag`, `collectionDrag`) with `onDragStart/onDragOver/o
 
 Components read signals directly (not via props). Store modules are imported and `.value` is accessed inline. No prop drilling, no context providers.
 
-App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid). `MainContent` renders `JamBanner` at the top (visible when navidrome-jam rooms are active). Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent. Dropdown menus (move menu in `TabCard`, export menu in `TopBar`) use a ref + `mousedown` listener for outside-click dismissal.
+App structure: `app.jsx` → `Sidebar` (collection list) + `TopBar` + `MainContent` (tab grid) or `SettingsPanel`. When `settingsOpen` signal is true, `SettingsPanel` replaces `MainContent`. Clicking a collection in the sidebar closes settings. `MainContent` conditionally renders `JamBanner` based on `jamEnabled` setting. Modals (`ImportModal`, `BookmarkImportModal`, `ConfirmDialog`) are rendered conditionally at the top level of their parent (now in `SettingsPanel` for import/export/clear). Dropdown menus (move menu in `TabCard`) use a ref + `mousedown` listener for outside-click dismissal.
+
+### Settings
+
+`SettingsPanel` (`src/components/SettingsPanel.jsx`) provides 5 sections: Appearance (theme + accent colors), Save Behavior (toolbar/shortcut targets), Navidrome Jam (toggle), Backups (toggle + frequency), Data (import/export/clear). Accessed via gear icon in TopBar.
+
+Storage keys used by settings:
+
+| Key | Storage | Purpose |
+|-----|---------|---------|
+| `tab-hoarder-theme` | localStorage | Theme (light/dark) |
+| `tab-hoarder-accent` | localStorage | Accent color name |
+| `tab-hoarder-jam-enabled` | localStorage | Jam widget toggle |
+| `tab-hoarder-toolbar-target` | chrome.storage.local | Toolbar save target |
+| `tab-hoarder-shortcut-target` | chrome.storage.local | Alt+S save target |
+| `tab-hoarder-daily-backup` | chrome.storage.local | Daily backup toggle |
+| `tab-hoarder-backup-interval` | chrome.storage.local | Backup frequency (minutes) |
 
 ### Import/export
 
@@ -128,6 +145,6 @@ Lucide "library" icon (ISC license) on terracotta circle. Source SVG at `public/
 
 - `base: ''` in `vite.config.js` — Chrome extensions require relative asset paths
 - `background.js` is static (not built) — keep it dependency-free, raw IndexedDB only
-- Bundle size matters — new tab opens on every tab creation. Current: ~53kB JS, ~18kB CSS
+- Bundle size matters — new tab opens on every tab creation. Current: ~61kB JS, ~21kB CSS
 - Permissions (`tabs`, `alarms`, `downloads`, `bookmarks`, `storage`) — adding new ones requires user to re-approve the extension
 - Input handlers: use `onBlur` as the single submit path; `onKeyDown` Enter should just `e.target.blur()` to avoid double-fire

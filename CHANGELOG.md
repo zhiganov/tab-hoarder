@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+- Add settings panel — gear icon in TopBar replaces import/export/bookmarks buttons
+- Add light/dark theme toggle (replaces system-only dark mode)
+- Add accent color picker — 6 preset color palettes (terracotta, ocean, forest, plum, slate, amber)
+- Add configurable save behavior — choose toolbar icon and Alt+S save targets (Saved Tabs or most recent collection)
+- Add Navidrome Jam widget toggle — enable/disable the listening rooms banner
+- Add backup controls — toggle daily file backup on/off, choose frequency (12h, daily, 3 days, weekly)
+- Consolidate data actions in settings — import JSON, import bookmarks, export, clear all data
+
 ## 0.2.4
 
 - Fix collection `updatedAt` not updating on toolbar icon and Alt+S saves

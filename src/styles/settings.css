@@ -15,7 +15,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   width: 92%;
-  max-width: 520px;
+  max-width: 640px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -282,11 +282,9 @@
   opacity: 1;
 }
 
-/* Danger zone separator */
 .settings-danger-zone {
   margin-top: var(--space-sm);
   padding-top: var(--space-sm);
-  border-top: 1px dashed color-mix(in srgb, #c44040 30%, var(--border));
 }
 
 .settings-action-btn.danger {

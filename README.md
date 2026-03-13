@@ -2,7 +2,7 @@
 
 Chrome/Brave extension for managing browser tabs locally. Like [Toby](https://www.gettoby.com/), but open-source and self-hosted.
 
-![Tab Hoarder screenshot](docs/screenshot.png)
+![Tab Hoarder screenshot](docs/plans/screenshot.png)
 
 ## Why Tab Hoarder?
 

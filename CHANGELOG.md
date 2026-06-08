@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1
+
+- Fix data loss when the browser clears the extension's site storage — a toolbar/Alt+S save into a wiped database now restores from the backup first instead of overwriting it with a single-tab database
+- Fix backup sync overwriting a good backup with an empty state after a failed load
+- Preserve original tab and collection dates on import (no longer restamped to import time)
+- Automatic backups now keep a rolling daily history (date-stamped files) instead of a single overwriting file
+- Rename the "Daily file backup" setting to "Automatic backups"
+
 ## 0.3.0
 
 - Add settings panel — gear icon in TopBar replaces import/export/bookmarks buttons

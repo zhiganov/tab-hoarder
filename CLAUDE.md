@@ -69,6 +69,8 @@ Note: Alt+S is a named command (not `_execute_action`), so users may need to set
 
 **Clear all data** — `clearAllData()` in `src/store/db.js` wipes both IndexedDB stores and the chrome.storage.local backup. Exposed via "Clear all data" button in Settings > Data with a danger confirmation dialog.
 
+**Gotcha — Brave/Chromium site-storage clearing.** Brave's "Forget me when I close this site" (Forget First-Party Storage / Auto-Shred) deletes the extension's **IndexedDB** when its tabs close; the new-tab origin is not exempt. `chrome.storage.local` (extension settings) is NOT affected — that's why it's the durable backup layer. As of v0.3.1 the app defends against this: `syncToStorage` refuses to overwrite a non-empty backup with empty (`src/store/backup.js`), and the service worker restores from `chrome.storage.local` before a toolbar/Alt+S save (`background.js` `restoreIfEmpty`); the automatic file backup is date-stamped (rolling daily history). If both in-browser layers are ever lost, recover by de-framing the `Local Extension Settings` leveldb write-ahead log for the last non-empty `tab-hoarder-backup` snapshot.
+
 ### CSS
 
 Custom CSS with variables in `src/styles/variables.css`. Dark mode via `[data-theme="dark"]` selector overriding CSS custom properties. Theme is set by `initSettings()` before render via `data-theme` attribute on `<html>`. No CSS framework.

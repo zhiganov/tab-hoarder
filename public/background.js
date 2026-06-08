@@ -19,6 +19,27 @@ function openDB() {
   });
 }
 
+// If IndexedDB is empty (e.g. the browser cleared site storage), rehydrate it
+// from the chrome.storage.local backup BEFORE we save into it. Without this, a
+// toolbar/Alt+S save against a freshly-wiped DB would create a 1-tab DB and then
+// mirror that over the good backup, destroying it.
+async function restoreIfEmpty(db) {
+  const cols = await getAllFromStore(db, 'collections');
+  const tabs = await getAllFromStore(db, 'tabs');
+  if (cols.length > 0 || tabs.length > 0) return false;
+  const stored = await chrome.storage.local.get('tab-hoarder-backup');
+  const data = stored['tab-hoarder-backup'];
+  if (!data || !(data.collections || []).length) return false;
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(['collections', 'tabs'], 'readwrite');
+    for (const c of data.collections) tx.objectStore('collections').put(c);
+    for (const t of (data.tabs || [])) tx.objectStore('tabs').put(t);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  return true;
+}
+
 function getSavedTabsCollection(db) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('collections', 'readonly');
@@ -139,6 +160,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     const settings = await chrome.storage.local.get('tab-hoarder-toolbar-target');
     const target = settings['tab-hoarder-toolbar-target'] || 'saved-tabs';
     const db = await openDB();
+    await restoreIfEmpty(db);
     const collection = target === 'most-recent'
       ? await getRecentCollection(db)
       : await getSavedTabsCollection(db);
@@ -158,6 +180,7 @@ chrome.commands.onCommand.addListener(async (command) => {
     const settings = await chrome.storage.local.get('tab-hoarder-shortcut-target');
     const target = settings['tab-hoarder-shortcut-target'] || 'most-recent';
     const db = await openDB();
+    await restoreIfEmpty(db);
     const collection = target === 'saved-tabs'
       ? await getSavedTabsCollection(db)
       : await getRecentCollection(db);
@@ -190,6 +213,7 @@ async function runBackup() {
     if (settings['tab-hoarder-daily-backup'] === false) return;
 
     const db = await openDB();
+    await restoreIfEmpty(db); // if the browser cleared site storage, rehydrate before backing up
     const collections = await getAllFromStore(db, 'collections');
     const tabs = await getAllFromStore(db, 'tabs');
     db.close();
@@ -207,9 +231,15 @@ async function runBackup() {
     const json = JSON.stringify(data, null, 2);
     const dataUrl = 'data:application/json;base64,' + btoa(unescape(encodeURIComponent(json)));
 
+    // Date-stamped filename -> one file per day, building a rolling history
+    // automatically (same-day runs overwrite). saveAs:false keeps it silent; if
+    // the browser still prompts, turn off "Ask where to save each file before
+    // downloading" in browser settings.
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     chrome.downloads.download({
       url: dataUrl,
-      filename: `TabHoarder/tab-hoarder-backup-${getBrowserName()}.json`,
+      filename: `TabHoarder/tab-hoarder-backup-${getBrowserName()}-${date}.json`,
       conflictAction: 'overwrite',
       saveAs: false,
     });

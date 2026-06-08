@@ -6,6 +6,12 @@ const STORAGE_KEY = 'tab-hoarder-backup';
 
 export async function syncToStorage() {
   try {
+    // Never overwrite a good backup with an empty state. An empty in-memory
+    // state almost always means a transient failure (e.g. the browser cleared
+    // site storage and the load/restore failed), not an intentional wipe.
+    // Intentional "clear all data" goes through clearAllData(), which removes
+    // the key directly.
+    if (collections.value.length === 0 && allTabs.value.length === 0) return;
     await chrome.storage.local.set({
       [STORAGE_KEY]: {
         collections: collections.value,

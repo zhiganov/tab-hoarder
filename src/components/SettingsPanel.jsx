@@ -225,8 +225,8 @@ export function SettingsPanel() {
 
               <div class="settings-row">
                 <div>
-                  <div class="settings-label">Daily file backup</div>
-                  <div class="settings-description">Downloads/TabHoarder/</div>
+                  <div class="settings-label">Automatic backups</div>
+                  <div class="settings-description">One file per day in Downloads/TabHoarder/</div>
                 </div>
                 <div
                   class={`toggle-switch ${dailyBackup ? 'on' : ''}`}

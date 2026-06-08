@@ -4,15 +4,18 @@
  * Tab Hoarder format: { collections: [...], tabs: [...] }
  */
 export function parseTobyExport(data) {
-  // Tab Hoarder own format
+  // Tab Hoarder own format — preserve original timestamps so a restore/re-import
+  // keeps each tab's real "date added" instead of stamping the import time.
   if (data.collections && data.tabs) {
     return data.collections.map((col) => ({
       name: col.name,
       isArchive: col.isArchive || false,
       color: col.color || null,
+      createdAt: col.createdAt,
+      updatedAt: col.updatedAt,
       tabs: data.tabs
         .filter((t) => t.collectionId === col.id)
-        .map((t) => ({ title: t.title, url: t.url })),
+        .map((t) => ({ title: t.title, url: t.url, createdAt: t.createdAt })),
     }));
   }
 

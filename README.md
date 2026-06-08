@@ -35,7 +35,7 @@ Your tabs are yours. No accounts, no cloud sync, no tracking — everything stay
 - Smart import deduplication — matches collections by name, skips duplicate URLs
 
 **Backups**
-- Automatic file backup to `Downloads/TabHoarder/` (browser-specific filenames)
+- Automatic file backups to `Downloads/TabHoarder/` — one date-stamped file per day, building a rolling history
 - Configurable frequency (12h, daily, 3 days, weekly)
 - chrome.storage.local backup — survives browser data clearing, restores transparently
 

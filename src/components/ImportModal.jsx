@@ -25,7 +25,11 @@ export function ImportModal({ onClose }) {
           const existing = collections.value.find(
             (c) => !c.isArchive && c.name === list.name
           );
-          col = existing || await createCollection(list.name);
+          col = existing || await createCollection(list.name, {
+            createdAt: list.createdAt,
+            updatedAt: list.updatedAt,
+            color: list.color,
+          });
         }
 
         const existingUrls = new Set(
@@ -40,6 +44,7 @@ export function ImportModal({ onClose }) {
           title: t.title,
           url: t.url,
           favicon: getFaviconUrl(t.url),
+          createdAt: t.createdAt,
         }));
         if (tabsData.length > 0) {
           await addTabs(col.id, tabsData);

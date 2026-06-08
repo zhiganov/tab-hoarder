@@ -50,7 +50,7 @@ export async function addTabs(collectionId, tabsData) {
     url: t.url,
     favicon: t.favicon || '',
     order: maxOrder + 1 + i,
-    createdAt: Date.now(),
+    createdAt: t.createdAt ?? Date.now(),
   }));
   for (const tab of newTabs) {
     await tx.store.put(tab);

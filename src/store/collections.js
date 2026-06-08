@@ -50,16 +50,17 @@ export async function getOrCreateArchive() {
   return archive;
 }
 
-export async function createCollection(name) {
+export async function createCollection(name, opts = {}) {
   const db = getDB();
   const maxOrder = collections.value.reduce((max, c) => Math.max(max, c.order), -1);
+  const now = Date.now();
   const collection = {
     id: generateId(),
     name,
     order: maxOrder + 1,
-    color: null,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
+    color: opts.color ?? null,
+    createdAt: opts.createdAt ?? now,
+    updatedAt: opts.updatedAt ?? now,
   };
   await db.put('collections', collection);
   collections.value = [...collections.value, collection];

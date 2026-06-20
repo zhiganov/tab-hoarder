@@ -126,12 +126,14 @@ Import/export logic lives in `src/lib/toby-import.js`, `src/lib/export.js`, and 
 
 ## Packaging
 
+Build the extension and zip `dist/` with `manifest.json` at the zip root (Chrome Web Store format):
+
 ```bash
-./scripts/package-dmg.sh            # Build + create .dmg (macOS only, uses hdiutil)
-./scripts/package-dmg.sh --skip-build  # Skip npm ci/build, use existing dist/
+npm run build                          # → dist/
+cd dist && zip -r ../tab-hoarder.zip . # CWS-ready zip (manifest at root)
 ```
 
-GitHub Actions workflow (`package-dmg.yml`) runs on `macos-latest` — triggers on manual dispatch or `v*` tag push. Uploads DMG as artifact; on tag push, attaches to GitHub Release.
+GitHub Actions workflow (`package-extension.yml`) runs on `ubuntu-latest` — triggers on manual dispatch or `v*` tag push. It builds the extension and attaches the CWS-ready zip (`tab-hoarder-<tag>.zip`) to the GitHub Release. The CWS upload itself is manual, and `manifest.json`'s version must increase with each upload. (The old macOS DMG packaging was removed — this is a browser extension.)
 
 ## Navidrome Jam Integration
 

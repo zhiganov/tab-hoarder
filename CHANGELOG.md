@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2
+
+- Republish the extension so the 0.3.1 fixes (data-loss resilience, preserved import dates) are actually in the shipped build — the previous 0.3.1 package was built from an earlier commit and missed them
+- Release workflow now builds and attaches the Chrome extension zip on tag (previously it only produced a macOS DMG, so the extension zip was never rebuilt)
+
 ## 0.3.1
 
 - Fix data loss when the browser clears the extension's site storage — a toolbar/Alt+S save into a wiped database now restores from the backup first instead of overwriting it with a single-tab database

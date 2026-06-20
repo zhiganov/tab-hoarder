@@ -208,7 +208,7 @@ export function SettingsPanel() {
               <div class="settings-row">
                 <div>
                   <div class="settings-label">Show listening rooms</div>
-                  <div class="settings-description">Active jam rooms from jam.zhgnv.com</div>
+                  <div class="settings-description">Active jam rooms from <a href="https://jam.zhgnv.com" target="_blank" rel="noopener noreferrer">jam.zhgnv.com</a></div>
                 </div>
                 <div
                   class={`toggle-switch ${jamEnabled.value ? 'on' : ''}`}
